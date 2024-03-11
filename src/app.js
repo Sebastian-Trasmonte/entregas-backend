@@ -1,23 +1,18 @@
 import express from 'express'
-import ProductManager from './Models/ProductManager.js';
-
+import productRouter from './routes/products.router.js'
 
 const app = express();
 
-const productManager = new ProductManager('./products.txt');
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use(express.static("public"));
 
-app.get('/products', async (req, res) => {
-    const limitProducts = req.query.limit;
-    res.send(await productManager.getProducts(limitProducts));
-});
-
-app.get('/products/:id', async (req, res) => {
-    const productId = req.params.id;
-    res.send(await productManager.getProductsById(productId));
-});
+app.use("/api/products", productRouter);
 
 const PORT = 8080;
-
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
+//cargar con multer las imagenes relacionadas a un id y luego
+//usarlo para el producto (validar si existe el id si no tirar error)
