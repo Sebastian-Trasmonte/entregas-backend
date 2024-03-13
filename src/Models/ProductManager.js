@@ -8,7 +8,7 @@ export default class ProductManager {
     }
     addProduct = async (product)  => {      
         if (!(product instanceof Product)) {
-            return console.log("The product is invalid");
+            return ("The product is invalid");
         }
         await this.#getProductsInArchive();
         const isProductExist = this.products.some(existingProduct => existingProduct.code === product.code);
@@ -62,6 +62,9 @@ export default class ProductManager {
     }
     #getProductsInArchive = async () => {
         const data = await fs.readFile(this.path, 'utf-8');
+        if (data === "") {
+            return;
+        }
         this.products = JSON.parse(data);
     }
     #updateProductsArchive = async () => {

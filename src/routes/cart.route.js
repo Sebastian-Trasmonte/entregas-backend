@@ -1,23 +1,34 @@
-import {Router} from "express";
+import {
+  Router
+} from "express";
 import CartManager from '../models/CartManager.js';
+import Cart from "../models/Cart.js";
+import path from 'path';
 
 const router = Router();
 
-const productManager = new CartManager('./products.txt');
+const rootDir = path.resolve();
 
-router.get('/', async (req, res) => {
-    const limitProducts = req.query.limit;
-    res.send(await productManager.getProducts(limitProducts));
-});
+const cartManager = new CartManager(`${rootDir}/src/carts.txt`, `${rootDir}/src/products.txt`);
 
 router.get('/:id', async (req, res) => {
-    const productId = req.params.id;
-    res.send(await productManager.getProductsById(productId));
+    const cartId = req.params.id;
+    res.send(await cartManager.getCartById(cartId));
 });
 
 router.post('/', async (req, res) => {
-    const productId = req.params.id;
-    res.send(await productManager.a(productId));
+  try {
+    const productsCart = new Cart(req.body);
+    res.send(await cartManager.addCart(productsCart));
+  } 
+  catch (error) {
+    console.log("error", error)
+    return res.status(500).send({
+      error: error.message
+    });
+  }
+
 });
+
 
 export default router;

@@ -47,8 +47,6 @@ router.delete('/:id', async (req, res) => {
         res.status(400).send({ error: 'id must be a number' });
         return;
     }
-
-  
     res.send(await productManager.removeProductById(productId));
 });
 
