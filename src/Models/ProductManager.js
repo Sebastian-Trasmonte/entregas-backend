@@ -70,4 +70,14 @@ export default class ProductManager {
     #updateProductsArchive = async () => {
         fs.writeFile(this.path, JSON.stringify(this.products));   
     }
+    addImageToProduct = async (idProduct, file) => {
+        await this.#getProductsInArchive();
+        let product = this.products.find(product => product.id == idProduct);
+        if (product === undefined) {
+            return "The product was not found";
+        }
+        product.thumbnail = file.filename;
+        await this.#updateProductsArchive();
+        return "The image was added successfully";
+    }
 }

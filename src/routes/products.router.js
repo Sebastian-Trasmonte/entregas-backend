@@ -2,6 +2,7 @@ import {Router} from "express";
 import ProductManager from '../models/ProductManager.js';
 import Product from "../models/Product.js";
 import path from 'path';
+import {uploader} from '../helpers/utils.js';
 
 const router = Router();
 
@@ -29,6 +30,13 @@ router.post('/', async (req, res) => {
     const product = new Product(title, description, price, thumbnail, code, stock, status)
     res.send(await productManager.addProduct(product));
 });
+
+
+router.post('/imgToProduct',uploader.single('file') , async (req, res) => {
+    const {idProduct}= req.body;
+    res.send(await productManager.addImageToProduct(idProduct, req.file));
+});
+
 
 router.put('/', async (req, res) => {
     try {
