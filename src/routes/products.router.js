@@ -7,7 +7,7 @@ import {uploader} from '../helpers/utils.js';
 const router = Router();
 
 const rootDir = path.resolve();
-const productManager = new ProductManager(`${rootDir}/src/products.txt`);
+const productManager = new ProductManager(`${rootDir}/src/products.json`);
 
 router.get('/', async (req, res) => {
     const limitProducts = req.query.limit;
@@ -38,12 +38,11 @@ router.post('/imgToProduct',uploader.single('file') , async (req, res) => {
 });
 
 
-router.put('/', async (req, res) => {
+router.put('/:id', async (req, res) => {
     try {
-        const {id,title, description, price, thumbnail, code, stock, status}= req.body;
-        const product = new Product(title, description, price, thumbnail, code, stock, status)
-        product.id =id;
-        res.send(await productManager.updateProduct(product));
+        const productId = req.params.id;
+        const updatedFields = req.body;
+        res.send(await productManager.updateProduct(productId,updatedFields));
     } catch (error) {
     return res.status(500).send({error: error.message});
     }

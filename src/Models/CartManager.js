@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs';
-import Cart from './Cart.js';
+import Cart, { ProductCart } from './Cart.js';
 
 export default class CartManager{
     constructor(pathCart, pathProduct) {
@@ -7,42 +7,47 @@ export default class CartManager{
         this.pathCart= pathCart;
         this.pathProduct = pathProduct;
     }
-    addCart = async (cartToAdd) => {
-        const existentProducts = await this.#getProductsInArchive();
-
-        const nonExistentProduct = cartToAdd.productsCart.find(productCart => !existentProducts.some(product => product.id === productCart.id));
-        
-        if (nonExistentProduct !== undefined) {
-            throw new Error(`Product with id ${nonExistentProduct.id} does not exist`);
-        }
-
+    addCart = async () => {
         await this.#getCartsInArchive();
-
-        if (this.carts.length > 0) {
-                   this.carts.forEach(existentCart => {
-                    existentCart.productsCart.forEach(productInCart => {
-                        const existingProductCart = cartToAdd.productsCart.find(p => p.id === productInCart.id);
-                        if (existingProductCart) {
-                            productInCart.quantity += existingProductCart.quantity;
-                            cartToAdd.productsCart = cartToAdd.productsCart.filter(productToFilter => productToFilter.id != existingProductCart.id);
-                        }});
-                });
-        }
        
-
-        if (cartToAdd.productsCart.length > 0) {
-            cartToAdd.id = this.#getMaxId() + 1;
-            console.log("cartToAdd",cartToAdd)
-            this.carts.push(cartToAdd);         
-        }
+        const idCart = this.#getMaxId() + 1;
+        this.carts.push(new Cart(idCart));
         await this.#updateCartArchive();
-        return 'The cart was added successfully';
+        return `The cart was created successfully, id cart: ${idCart}`;
     }
     #getMaxId() {
         if (this.carts.length === 0) {
             return 0;
         }
         return Math.max(...this.carts.map(cart => cart.id));
+    }
+    addProductToCart = async (idCart, idProduct) => {
+        const existentProducts = await this.#getProductsInArchive();
+        const productExists = existentProducts.find(product => product.id == idProduct);
+
+        if (!productExists) {
+            throw new Error('Product does not exist');
+        }
+
+        await this.#getCartsInArchive();
+
+        const cart = this.carts.find(cart => cart.id == idCart);
+
+        if (!cart) {
+            throw new Error('Cart does not exist');
+        }
+
+        if (cart.productsCart.length != 0 && cart.productsCart.find(product => product.id === idProduct)) 
+        {
+            cart.productsCart.find(product => product.id === idProduct).quantity += 1;
+            await this.#updateCartArchive();
+            return `The product was updated successfully to the cart with id: ${cart.id}`;
+        }
+        else{
+            cart.productsCart.push(new ProductCart(idProduct, 1));
+            await this.#updateCartArchive();
+            return `The product was added successfully to the cart with id: ${cart.id}`;
+        }              
     }
     getCartById = async(id) => {
         await this.#getCartsInArchive();

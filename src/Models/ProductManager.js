@@ -42,21 +42,19 @@ export default class ProductManager {
         await this.#updateProductsArchive();
         return "The product was removed successfully";
     }
-    updateProduct = async(updatedProduct) =>{
-        if (updatedProduct.id === undefined) {
-            return "The id is required";
-        }
+    updateProduct=async(idProduct, updatedFields) =>{
         await this.#getProductsInArchive();
-        this.products = this.products.map(product => {
-            if (product.id === updatedProduct.id) {
-                if (this.products.find(product => product.code === updatedProduct.code && product.id !== updatedProduct.id)) {
-                  throw new Error("The product was exists in the list");
-                }
-                return {...product, ...updatedProduct};
-            }
+        const productIndex = this.products.findIndex(product => product.id == idProduct);
 
-            return product;
-        });
+        if (productIndex === -1) {
+            throw new Error('Product does not exist');
+        }
+
+        // Actualiza solo los campos que vienen en updatedFields
+        const updatedProduct = { ...this.products[productIndex], ...updatedFields };
+
+        // Reemplaza el producto en el índice encontrado con el producto actualizado
+        this.products[productIndex] = updatedProduct;
         await this.#updateProductsArchive();
         return "The product was updated successfully";
     }

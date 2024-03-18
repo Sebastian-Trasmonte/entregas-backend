@@ -9,7 +9,7 @@ const router = Router();
 
 const rootDir = path.resolve();
 
-const cartManager = new CartManager(`${rootDir}/src/carts.txt`, `${rootDir}/src/products.txt`);
+const cartManager = new CartManager(`${rootDir}/src/carts.json`, `${rootDir}/src/products.json`);
 
 router.get('/:id', async (req, res) => {
     const cartId = req.params.id;
@@ -18,8 +18,7 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const productsCart = new Cart(req.body);
-    res.send(await cartManager.addCart(productsCart));
+    res.send(await cartManager.addCart());
   } 
   catch (error) {
     console.log("error", error)
@@ -27,7 +26,20 @@ router.post('/', async (req, res) => {
       error: error.message
     });
   }
+});
 
+router.post('/:id/product/:productId', async (req, res) => {
+  try {
+    const cartId = req.params.id;
+    const productId = req.params.productId;
+    res.send(await cartManager.addProductToCart(cartId, productId));
+  } 
+  catch (error) {
+    console.log("error", error)
+    return res.status(500).send({
+      error: error.message
+    });
+  }
 });
 
 

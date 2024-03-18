@@ -1,0 +1,17 @@
+[{
+    "title": "comida para gatos Royal",
+    "description": "Comida para gatos royal 12kg",
+    "price": 60000,
+    "thumbnail": "cuidardgatito-t.jpg.webp",
+    "code": "RoyalCat12",
+    "stock": 3,
+    "id": 1
+}, {
+    "title": "comida para perros Eukanuba",
+    "description": "Comida para perros Eukanuba 15kg",
+    "price": 66000,
+    "thumbnail": "thumbnail",
+    "code": "DogEukanuba",
+    "stock": 10,
+    "id": 2
+}]
