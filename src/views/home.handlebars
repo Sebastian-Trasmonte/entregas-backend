@@ -1,0 +1,31 @@
+<div>
+    <h1 class="titleForm">Crear un nuevo producto</h1>
+    <div class="productForm">
+        <label for="productTitle">Título del producto:</label><br>
+        <input type="text" id="productTitle" name="productTitle"><br>
+        <label for="productDescription">Descripción del producto:</label><br>
+        <input type="text" id="productDescription" name="productDescription"><br>
+        <label for="productPrice">Precio del producto:</label><br>
+        <input type="text" id="productPrice" name="productPrice"><br>
+        <label for="productCode">Código del producto:</label><br>
+        <input type="text" id="productCode" name="productCode"><br>
+        <label for="productStock">Stock del producto:</label><br>
+        <input type="text" id="productStock" name="productStock"><br>
+        <button class="add-product" onclick="addProduct()">Crear producto</button>
+    </div>
+   <div class="product-grid" id="product-grid">
+    {{#each products}}
+        <div class="product-card" id="productId{{this.id}}">
+            <h2>{{this.title}}</h2>
+            <p>ID: {{this.id}}</p>
+            <p>Precio: {{this.price}}</p>
+            <p>Descripción: {{this.description}}</p>
+            <p>Código: {{this.code}}</p>
+            <p>En stock: {{this.stock}}</p>
+            <button class="delete-product" onclick="deleteProduct({{this.id}});">Eliminar</button>
+        </div>
+    {{/each}}
+    </div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>

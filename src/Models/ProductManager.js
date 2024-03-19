@@ -19,7 +19,7 @@ export default class ProductManager {
         product.id = lastIdOfProducts + 1;
         this.products.push(product);
         await this.#updateProductsArchive();
-        return `The product was added successfully id: ${product.id}`
+        return { message: `The product was added successfully`, id: product.id };
     }
     #getMaxId() {
         if (this.products.length === 0) {
@@ -40,7 +40,7 @@ export default class ProductManager {
         await this.#getProductsInArchive();
         this.products = this.products.filter(product => product.id != id);
         await this.#updateProductsArchive();
-        return "The product was removed successfully";
+        return  { message: `The product was removed successfully`, id: id }
     }
     updateProduct=async(idProduct, updatedFields) =>{
         await this.#getProductsInArchive();

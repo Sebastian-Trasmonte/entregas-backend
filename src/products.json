@@ -1,17 +1,1 @@
-[{
-    "title": "comida para gatos Royal",
-    "description": "Comida para gatos royal 12kg",
-    "price": 60000,
-    "thumbnail": "cuidardgatito-t.jpg.webp",
-    "code": "RoyalCat12",
-    "stock": 3,
-    "id": 1
-}, {
-    "title": "comida para perros Eukanuba",
-    "description": "Comida para perros Eukanuba 15kg",
-    "price": 66000,
-    "thumbnail": "thumbnail",
-    "code": "DogEukanuba",
-    "stock": 10,
-    "id": 2
-}]
+[{"title":"pipeta gatos 10ml","description":"pipeta gatos 10ml","price":2000,"thumbnail":"thumbnail","code":"PipetCat18","stock":1,"id":1,"status":true},{"title":"pipeta gatos 10ml","description":"pipeta gatos 10ml","price":2000,"thumbnail":"thumbnail","code":"PipetCat28","stock":1,"id":2,"status":true},{"title":"pepito","description":"pepaso","price":"100","thumbnail":null,"code":"pepi100","stock":"10000","id":3,"status":true}]
