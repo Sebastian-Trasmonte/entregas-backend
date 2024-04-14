@@ -1,8 +1,9 @@
 import {
-    ProductCart
+    ProductCartDB
 } from '../models/Cart.js';
 import cartModel from './models/cartModel.js'
 import productModel from './models/productModel.js'
+import mongoose from 'mongoose';
 
 export default class CartManagerDB {
     addCart = async () => {
@@ -15,6 +16,11 @@ export default class CartManagerDB {
         }
     }
     addProductToCart = async (idCart, idProduct) => {
+
+        if (!mongoose.Types.ObjectId.isValid(idCart) || !mongoose.Types.ObjectId.isValid(idProduct)) {
+            throw new Error("Id cart or IdProduct is an invalid mongoose id")
+        }
+
         let cart;
         try {
             cart = await cartModel.findOne({
@@ -28,51 +34,29 @@ export default class CartManagerDB {
             throw new Error('Cart does not exist');
         }
 
-        // let product;
-        // try {
-        //     product = productModel.findOne({
-        //         _id: id
-        //     });
-        // } catch (error) {
-        //     console.error(error.message);
-        //     throw new Error("Error in find product")
-        // }
+        let product;
+        try {
+            product = await productModel.findOne({
+                _id: idProduct
+            });
+        } catch (error) {
+            console.error(error.message);
+            throw new Error("Error in find product")
+        }
 
-        // if (!product) {
-        //     throw new Error('Product does not exist');
-        // }
-     
-
-        // try {
-        //     await cartModel.findByIdAndUpdate(
-        //             idCart, {
-        //                 $set: {
-        //                     thumbnail: file.originalname
-        //                 }
-        //             }, {
-        //                 new: true
-        //             }, // Para que devuelva el documento actualizado
-        //         )
-        //         .then(documentoActualizado => {
-        //             console.log('The image was added successfully');
-        //             return documentoActualizado;
-        //         })
-        //         .catch(err => {
-        //             console.error('Error in insert image:', err);
-        //         });
-        // } catch (error) {
-        //     console.error(error.message);
-        //     throw new Error(`Error in add image to product, id ${idProduct}`)
-        // }
-
-        if (cart.productsCart.length != 0 && cart.productsCart.find(product => product.id === idProduct)) {
-            cart.productsCart.find(product => product.id === idProduct).quantity += 1;
+        if (!product) {
+            throw new Error('Product does not exist');
+        }
+        //661c05ccd59fa3806e4000a1
+        const idProductMoongose = new mongoose.Types.ObjectId(idProduct);
+        if (cart.productsCart.length != 0 && cart.productsCart.find(product => product._id.toString() === idProduct)) {
+            cart.productsCart.find(product => product._id.toString() === idProduct).quantity += 1;
             const result = await cartModel.updateOne({
                 _id: idCart
             }, cart);
             return result;
         } else {
-            cart.productsCart.push(new ProductCart(idProduct, 1));
+            cart.productsCart.push(new ProductCartDB(idProduct, 1));
             const result = await cartModel.updateOne({
                 _id: idCart
             }, cart);

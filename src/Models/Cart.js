@@ -11,3 +11,10 @@ export class ProductCart{
         this.quantity = quantity;
     }
 }
+
+export class ProductCartDB{
+    constructor(id, quantity) {
+        this._id = id;
+        this.quantity = quantity;
+    }
+}
