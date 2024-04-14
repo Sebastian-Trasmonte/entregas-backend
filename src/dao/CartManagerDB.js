@@ -47,7 +47,6 @@ export default class CartManagerDB {
         if (!product) {
             throw new Error('Product does not exist');
         }
-        //661c05ccd59fa3806e4000a1
         const idProductMoongose = new mongoose.Types.ObjectId(idProduct);
         if (cart.productsCart.length != 0 && cart.productsCart.find(product => product._id.toString() === idProduct)) {
             cart.productsCart.find(product => product._id.toString() === idProduct).quantity += 1;

@@ -9,11 +9,13 @@ import {Server} from "socket.io";
 //import ProductManager from './dao/ProductManagerFS.js';
 import Product from './models/Product.js';
 import ProductManagerDB from './dao/ProductManagerDB.js';
+import MessageManagerDB from './dao/MessageManagerDB.js';
 import mongoose from 'mongoose';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const productManager = new ProductManagerDB();
+const messageManager = new MessageManagerDB();
 
 const app = express();
 
@@ -39,6 +41,8 @@ const htppServer = app.listen(PORT, () => {
 
 export const socketServer = new Server(htppServer);
 
+const messages = await messageManager.getAllMessages();
+socketServer.emit("messagesLogs", messages);
 socketServer.on("connection", (socket) => {
     socket.on("delete-product", async (idproduct) => {
         console.log("aquiii",idproduct)
@@ -55,4 +59,16 @@ socketServer.on("connection", (socket) => {
             socketServer.emit("product-added", product);
         }
     })
+
+    socket.on("message", async data => {
+        console.log("data",data)
+        await messageManager.addMessage(data.user, data.message);
+        const messages = await messageManager.getAllMessages();
+        socketServer.emit("messagesLogs", messages);
+    });
+
+    socket.on("userConnect", data => {
+        socket.emit("messagesLogs", messages);
+        socket.broadcast.emit("newUser", data);
+    });
 });
