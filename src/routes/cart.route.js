@@ -1,15 +1,11 @@
 import {
   Router
 } from "express";
-import CartManager from '../models/CartManager.js';
-import Cart from "../models/Cart.js";
+import CartManager from '../dao/CartManagerDB.js';
 import path from 'path';
 
 const router = Router();
-
-const rootDir = path.resolve();
-
-const cartManager = new CartManager(`${rootDir}/src/carts.json`, `${rootDir}/src/products.json`);
+const cartManager = new CartManager();
 
 router.get('/:id', async (req, res) => {
     const cartId = req.params.id;

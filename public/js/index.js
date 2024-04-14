@@ -32,15 +32,15 @@ socket.on("product-added", (product) => {
     const productsContainer =document.getElementById('product-grid');
     const productDiv = document.createElement('div');
     productDiv.className = "product-card";
-    productDiv.id = `productId${product.id}`;
+    productDiv.id = `productId${product._id}`;
     productDiv.innerHTML = `
         <h2>${product.title}</h2>
-        <p>ID: ${product.id}</p>
+        <p>ID: ${product._id}</p>
         <p>Precio: ${product.price}</p>
         <p>Descripción: ${product.description}</p>
         <p>Código: ${product.code}</p>
         <p>En stock: ${product.stock}</p>
-        <button class="delete-product" onclick="deleteProduct(${product.id})">Delete</button>
+        <button class="delete-product" onclick="deleteProduct(${product._id})">Delete</button>
     `;
     productsContainer.appendChild(productDiv);
 })

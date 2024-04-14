@@ -1,4 +1,4 @@
-import Product from './Product.js';
+import Product from '../models/Product.js';
 import { promises as fs } from 'fs';
 
 export default class ProductManager {

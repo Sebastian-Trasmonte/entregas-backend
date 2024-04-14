@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs';
-import Cart, { ProductCart } from './Cart.js';
+import Cart, { ProductCart } from '../models/Cart.js';
 
 export default class CartManager{
     constructor(pathCart, pathProduct) {

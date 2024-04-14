@@ -15,14 +15,14 @@
     </div>
    <div class="product-grid" id="product-grid">
     {{#each products}}
-        <div class="product-card" id="productId{{this.id}}">
+        <div class="product-card" id="productId{{this._id}}">
             <h2>{{this.title}}</h2>
-            <p>ID: {{this.id}}</p>
+            <p>ID: {{this._id}}</p>
             <p>Precio: {{this.price}}</p>
             <p>Descripción: {{this.description}}</p>
             <p>Código: {{this.code}}</p>
             <p>En stock: {{this.stock}}</p>
-            <button class="delete-product" onclick="deleteProduct({{this.id}});">Eliminar</button>
+            <button class="delete-product" onclick="deleteProduct({{this._id}});">Eliminar</button>
         </div>
     {{/each}}
     </div>
