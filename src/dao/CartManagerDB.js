@@ -64,6 +64,10 @@ export default class CartManagerDB {
         }
     }
     getCartById = async (id) => {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            throw new Error("Id cart is an invalid mongoose id")
+        }
+
         try {
             const cart = await cartModel.findOne({
                 _id: id

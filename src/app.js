@@ -41,17 +41,18 @@ export const socketServer = new Server(htppServer);
 
 socketServer.on("connection", (socket) => {
     socket.on("delete-product", async (idproduct) => {
-        console.log("aquiii")
+        console.log("aquiii",idproduct)
         await productManager.removeProductById(idproduct);
         socketServer.emit("product-deleted", idproduct);
     })
 
     socket.on("add-product", async (data) => {
-        console.log("aquiii2",data)
         const {title, price, description, code, stock} = data;
         const product = new Product(title, description, price, null, code, stock)
         const result = await productManager.addProduct(product);
-        product.id = result.id;
-        socketServer.emit("product-added", product);
+        if (result._id != undefined){
+            product._id = result.id;
+            socketServer.emit("product-added", product);
+        }
     })
 });

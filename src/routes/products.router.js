@@ -28,7 +28,10 @@ router.post('/', async (req, res) => {
     const {title, description, price, thumbnail, code, stock, status}= req.body;
     const product = new Product(title, description, price, thumbnail, code, stock, status)
     const result = await productManager.addProduct(product);
-    socketServer.emit("product-added", product);
+    if (result._id != undefined){
+        product._id = result._id.toString();
+        socketServer.emit("product-added", product);
+    }
     res.send(result);
 });
 
@@ -36,7 +39,6 @@ router.post('/imgToProduct',uploader.single('file') , async (req, res) => {
     const {idProduct}= req.body;
     res.send(await productManager.addImageToProduct(idProduct, req.file));
 });
-
 
 router.put('/:id', async (req, res) => {
     try {
@@ -51,7 +53,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const productId = req.params.id;
     const result = await productManager.removeProductById(productId);
-    socketServer.emit("product-deleted", result._id);
+    socketServer.emit("product-deleted", productId);
     res.send(result);
 });
 

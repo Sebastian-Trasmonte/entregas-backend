@@ -22,7 +22,7 @@
             <p>Descripción: {{this.description}}</p>
             <p>Código: {{this.code}}</p>
             <p>En stock: {{this.stock}}</p>
-            <button class="delete-product" onclick="deleteProduct({{this._id}});">Eliminar</button>
+            <button class="delete-product" onclick="deleteProduct('{{this._id}}');">Eliminar</button>
         </div>
     {{/each}}
     </div>

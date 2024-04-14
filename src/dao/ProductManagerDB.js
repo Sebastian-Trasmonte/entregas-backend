@@ -1,5 +1,6 @@
 import Product from '../models/Product.js';
 import productModel from './models/productModel.js'
+import mongoose from 'mongoose';
 
 export default class ProductManagerDB {
     addProduct = async (product) => {
@@ -27,7 +28,11 @@ export default class ProductManagerDB {
             });
             return result;
         } catch (error) {
-            console.error(error.message);
+            
+            if (error.code === 11000 || error.code === 11001) {
+                return "The product code exists"
+            }
+            console.error(error.message);            
             throw new Error("Error in create product");
         }
     }
@@ -40,6 +45,9 @@ export default class ProductManagerDB {
         }
     }
     getProductsById = async (id) => {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return "Id product is an invalid mongoose id"
+        }
         try {
             const product = await productModel.findOne({
                 _id: id
@@ -51,22 +59,28 @@ export default class ProductManagerDB {
         }
     }
     removeProductById = async (id) => {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return "Id product is an invalid mongoose id"
+        }
         try {
             const result = await productModel.deleteOne({
                 _id: id
             });
 
             if (result.deletedCount === 0){
-                throw new Error(`Product id ${idProduct} not exists`) 
+                return (`Product id ${id} not exists`) 
             }
 
             return result;
         } catch (error) {
             console.error(error.message);
-            throw new Error(`Error in remove product, id ${idProduct}`)
+            throw new Error(`Error in remove product, id ${id}`)
         }
     }
     updateProduct = async (idProduct, updatedFields) => {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return "Id product is an invalid mongoose id"
+        }
         try {
             const result = await productModel.updateOne({
                 _id: idProduct
@@ -78,6 +92,9 @@ export default class ProductManagerDB {
         }
     }
     addImageToProduct = async (idProduct, file) => {
+        if (!mongoose.Types.ObjectId.isValid(idProduct)) {
+            return "Id product is an invalid mongoose id"
+        }
         try {
             await productModel.findByIdAndUpdate(
                 idProduct,
