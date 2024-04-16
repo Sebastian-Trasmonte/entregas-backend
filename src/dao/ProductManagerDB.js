@@ -10,7 +10,8 @@ export default class ProductManagerDB {
             code,
             price,
             stock,
-            thumnails
+            thumnails,
+            category
         } = product;
 
         if (!(product instanceof Product)) {
@@ -24,6 +25,7 @@ export default class ProductManagerDB {
                 code,
                 price,
                 stock,
+                category,
                 thumnails: thumnails ?? []
             });
             return result;
@@ -36,9 +38,20 @@ export default class ProductManagerDB {
             throw new Error("Error in create product");
         }
     }
-    getAllProducts = async (limit) => {
+    getAllProducts = async (limit,page,sort,query) => {
         try {
-            return await productModel.find().lean();
+
+            let queryObj = null;
+            if (query) {
+                queryObj = JSON.parse(query);
+            }
+            const products = await productModel.paginate(queryObj, {
+                limit: limit,
+                page: page,
+                sort: sort
+            });
+    
+            return products;
         } catch (error) {
             console.error(error.message);
             throw new Error("Error in find products")

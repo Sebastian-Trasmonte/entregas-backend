@@ -9,7 +9,14 @@ const messageManagerDB = new MessageManagerDB();
 
 router.get("/", async (req, res) => {
 
-    const products = await productManager.getAllProducts();
+    const { limit = 10, page = 1, sort, query } = req.query;
+    const result = await productManager.getAllProducts(limit,page,sort,query);
+    
+    const products = result.docs.map(product => {
+        return product.toObject({ getters: true });
+    });
+
+    console.log(products)
     res.render(
         "home",
         {
@@ -32,4 +39,5 @@ router.get("/messages", async (req, res) => {
         }
     )
 });
+
 export default router;

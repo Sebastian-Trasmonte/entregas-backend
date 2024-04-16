@@ -9,14 +9,25 @@ const router = Router();
 const productManager = new ProductManagerDB();
 
 router.get('/', async (req, res) => {
-    const limitProducts = req.query.limit;
+    const { limit = 10, page = 1, sort, query } = req.query;
     
-    if (limitProducts !== undefined && isNaN(limitProducts)) {
+    if (limit !== undefined && isNaN(limit)) {
         res.status(400).send({ error: 'Limit must be a number' });
         return;
     }
 
-    res.send(await productManager.getAllProducts(limitProducts));
+    if (page !== undefined && isNaN(page)) {
+        res.status(400).send({ error: 'Page must be a number' });
+        return;
+    }
+    let sortOrder;
+    if (sort === 'asc') {
+        sortOrder = { price: 1 }; // Orden ascendente por precio
+    } else if (sort === 'desc') {
+        sortOrder = { price: -1 }; // Orden descendente por precio
+    }
+
+    res.send(await productManager.getAllProducts(limit,page,sortOrder,query));
 });
 
 router.get('/:id', async (req, res) => {
@@ -25,8 +36,8 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const {title, description, price, thumbnail, code, stock, status}= req.body;
-    const product = new Product(title, description, price, thumbnail, code, stock, status)
+    const {title, description, price, thumbnail, code, stock, status,category}= req.body;
+    const product = new Product(title, description, price, thumbnail, code, stock, status,category)
     const result = await productManager.addProduct(product);
     if (result._id != undefined){
         product._id = result._id.toString();

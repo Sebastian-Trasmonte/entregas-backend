@@ -15,6 +15,7 @@ function addProduct() {
     const description = document.getElementById('productDescription').value;
     const code = document.getElementById('productCode').value;
     const stock = document.getElementById('productStock').value;
+    const category = document.getElementById('productCategory').value;
 
     if (title && price && description && code && stock) {
         socket.emit("add-product", {
@@ -22,7 +23,8 @@ function addProduct() {
             price,
             description,
             code,
-            stock
+            stock,
+            category
         });
     }else
         alert("All fields are required");

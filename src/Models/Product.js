@@ -1,11 +1,12 @@
 class Product {
-    constructor(title, description, price,thumbnail,code,stock,status) {
+    constructor(title, description, price,thumbnail,code,stock,status,category) {
        
         if (title === undefined || title === null ||
             description === undefined || description === null ||
             price === undefined || price === null ||           
             code === undefined || code === null || 
-            stock === undefined || stock === null) {
+            stock === undefined || stock === null ||
+            category === undefined || category === null) {
             throw new Error('Required fields are missing');
         }
         this.title = title;
@@ -14,7 +15,7 @@ class Product {
         this.thumbnail = thumbnail;
         this.code = code;
         this.stock = stock;
-        this.id = null;
+        this.category = category;
         this.status = status ?? true;
     }
 }

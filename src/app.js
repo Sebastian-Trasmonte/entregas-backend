@@ -51,8 +51,8 @@ socketServer.on("connection", (socket) => {
     })
 
     socket.on("add-product", async (data) => {
-        const {title, price, description, code, stock} = data;
-        const product = new Product(title, description, price, null, code, stock)
+        const {title, price, description, code, stock,category} = data;
+        const product = new Product(title, description, price, null, code, stock,category)
         const result = await productManager.addProduct(product);
         if (result._id != undefined){
             product._id = result.id;
