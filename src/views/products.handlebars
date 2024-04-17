@@ -1,27 +1,28 @@
 <div>
-   <div class="product-grid" id="product-grid">
+  <div class="product-grid" id="product-grid">
     {{#each products}}
-        <div class="product-card" id="productId{{this._id}}">
-            <h2>{{this.title}}</h2>
-            <p>Descripción: {{this.description}}</p>
-            <p>Precio: {{this.price}}</p>
-            {{!-- <button class="product-detail" onclick="productDetail('{{this._id}}');">Ver detalle</button> --}}
-            <a href="/realtimeproducts/productDetail/{{_id}}">
-                <button class="product-detail">Ver detalle</button>
-            </a>
-        </div>
+      <div class="product-card" id="productId{{this._id}}">
+        <h2>{{this.title}}</h2>
+        <p>Descripción: {{this.description}}</p>
+        <p>Precio: {{this.price}}</p>
+        {{!-- <button class="product-detail" onclick="productDetail('{{this._id}}');">Ver detalle</button> --}}
+        <a href="/realtimeproducts/productDetail/{{_id}}">
+          <button class="product-detail">Ver detalle</button>
+        </a>
+        <button class="add-cart">Agregar al carrito</button>
+      </div>
     {{/each}}
-    </div>
+  </div>
 
-    <div class="pagination">
-        {{#if hasPrevPage}}
-            <a href="?page={{prevPage}}&limit={{limit}}">Anterior</a>
-        {{/if}}
+  <div class="pagination">
+    {{#if hasPrevPage}}
+      <a href="?page={{prevPage}}&limit={{limit}}">Anterior</a>
+    {{/if}}
 
-        {{#if hasNextPage}}
-            <a href="?page={{nextPage}}&limit={{limit}}">Siguiente</a>
-        {{/if}}
-    </div>
+    {{#if hasNextPage}}
+      <a href="?page={{nextPage}}&limit={{limit}}">Siguiente</a>
+    {{/if}}
+  </div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/index.js"></script>

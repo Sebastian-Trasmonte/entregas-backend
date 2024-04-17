@@ -75,7 +75,7 @@ export default class ProductManagerDB {
         try {
             const product = await productModel.findOne({
                 _id: id
-            });
+            }).lean();
             return product ?? "Not found";
         } catch (error) {
             console.error(error.message);

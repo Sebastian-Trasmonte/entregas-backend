@@ -8,7 +8,7 @@ const productManager = new ProductManager();
 const messageManagerDB = new MessageManagerDB();
 
 router.get("/", async (req, res) => {
-    const result = await productManager.getAllProducts();
+    const products = await productManager.getAllProducts();
 
     res.render(
         "home",
@@ -80,13 +80,12 @@ router.get("/products", async (req, res) => {
 
 router.get("/productDetail/:id", async (req, res) => {
     const id = req.params.id;
-    const result = await productManager.getProductsById(id);
-
+    const product = await productManager.getProductsById(id);
     res.render(
-        "productDetailt",
+        "productDetail",
         {
             title: "Product details",
-            products: result,
+            product: product,
             style: "index.css",
         }
     )
