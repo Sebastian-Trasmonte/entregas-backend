@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
         sortOrder = { price: -1 }; // Orden descendente por precio
     }
 
-    res.send(await productManager.getAllProducts(limit,page,sortOrder,query));
+    res.send(await productManager.getAllProductsWithFilters(limit,page,sortOrder,query));
 });
 
 router.get('/:id', async (req, res) => {

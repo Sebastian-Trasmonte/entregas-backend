@@ -38,7 +38,18 @@ export default class ProductManagerDB {
             throw new Error("Error in create product");
         }
     }
-    getAllProducts = async (limit,page,sort,query) => {
+    getAllProducts = async () => {
+        try {
+
+          const products = await productModel.find().lean();
+    
+          return products;
+        } catch (error) {
+            console.error(error.message);
+            throw new Error("Error in find products")
+        }
+    }
+    getAllProductsWithFilters = async (limit,page,sort,query) => {
         try {
 
             let queryObj = null;
