@@ -114,11 +114,19 @@ router.get("/productDetail/:id", async (req, res) => {
 router.get('/cart/:id', async (req, res) => {
     const id = req.params.id;
     const cart = await cartManagerDB.getCartById(id);
+ 
     let total = 0;
-    for (let item of cart) {
+    for (let item of cart.productsCart) {
+        console.log("item",item);
         total += item.product.price * item.quantity;
+        console.log("total",total);
     }
-    res.render('cart', { cart: cart, total: total });
+
+    const products = cart.productsCart.map(product => {
+        return product.toObject({ getters: true });
+    });
+
+    res.render('cart', { cartsProducts: products, total: total });
 });
 
 export default router;

@@ -71,7 +71,6 @@ const messages = await messageManager.getAllMessages();
 socketServer.emit("messagesLogs", messages);
 socketServer.on("connection", (socket) => {
     socket.on("delete-product", async (idproduct) => {
-        console.log("aquiii", idproduct)
         await productManager.removeProductById(idproduct);
         socketServer.emit("product-deleted", idproduct);
     })
@@ -94,7 +93,6 @@ socketServer.on("connection", (socket) => {
     })
 
     socket.on("message", async data => {
-        console.log("data", data)
         await messageManager.addMessage(data.user, data.message);
         const messages = await messageManager.getAllMessages();
         socketServer.emit("messagesLogs", messages);
