@@ -2,10 +2,12 @@ import { Router } from "express";
 //import ProductManager from "../dao/ProductManagerFS.js";
 import ProductManager from "../dao/ProductManagerDB.js";
 import MessageManagerDB from "../dao/MessageManagerDB.js";
+import CartManagerDB from "../dao/CartManagerDB.js";
 
 const router = Router();
 const productManager = new ProductManager();
 const messageManagerDB = new MessageManagerDB();
+const cartManagerDB = new CartManagerDB();
 
 router.get("/", async (req, res) => {
     const products = await productManager.getAllProducts();
@@ -89,6 +91,16 @@ router.get("/productDetail/:id", async (req, res) => {
             style: "index.css",
         }
     )
+});
+
+router.get('/cart/:id', async (req, res) => {
+    const id = req.params.id;
+    const cart = await cartManagerDB.getCartById(id);
+    let total = 0;
+    for (let item of cart) {
+        total += item.product.price * item.quantity;
+    }
+    res.render('cart', { cart: cart, total: total });
 });
 
 export default router;
