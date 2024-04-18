@@ -2,17 +2,26 @@ import express from 'express'
 import productRouter from './routes/products.router.js'
 import cartRouter from './routes/cart.route.js'
 import handlebars from "express-handlebars";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
+import {
+    fileURLToPath
+} from "url";
+import {
+    dirname
+} from "path";
 import viewsRouter from "./routes/views.router.js";
-import {Server} from "socket.io";
-//import ProductManager from './dao/ProductManagerFS.js';
+import {
+    Server
+} from "socket.io";
 import Product from './models/Product.js';
 import ProductManagerDB from './dao/ProductManagerDB.js';
 import MessageManagerDB from './dao/MessageManagerDB.js';
 import mongoose from 'mongoose';
+import sessionRouter from './routes/user.router.js';
+import session from 'express-session';
+import mongoStore from 'connect-mongo';
 
-const __filename = fileURLToPath(import.meta.url);
+const __filename = fileURLToPath(
+    import.meta.url);
 const __dirname = dirname(__filename);
 const productManager = new ProductManagerDB();
 const messageManager = new MessageManagerDB();
@@ -24,15 +33,32 @@ const conectionString = "mongodb+srv://tpCoder:iEkbrfkVja0LHEwh@cluster0.uswvjfi
 mongoose.connect(conectionString);
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({
+    extended: true
+}));
 app.use(express.static("public"));
 app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/realtimeproducts", viewsRouter);
+app.use("api/session", sessionRouter);
 
 app.engine("handlebars", handlebars.engine());
-app.set("views",`${__dirname}/views`);
+app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
+
+app.use(session({
+    store: mongoStore.create({
+        mongoUrl: conectionString,
+        mongoOptions: {
+            useUnifiedTopology: true
+        }
+    }),
+    secret: "secreto",
+    resave: false,
+    saveUninitialized: false,
+}));
+
+
 
 const PORT = 8080;
 const htppServer = app.listen(PORT, () => {
@@ -45,23 +71,30 @@ const messages = await messageManager.getAllMessages();
 socketServer.emit("messagesLogs", messages);
 socketServer.on("connection", (socket) => {
     socket.on("delete-product", async (idproduct) => {
-        console.log("aquiii",idproduct)
+        console.log("aquiii", idproduct)
         await productManager.removeProductById(idproduct);
         socketServer.emit("product-deleted", idproduct);
     })
 
     socket.on("add-product", async (data) => {
-        const {title, price, description, code, stock,category} = data;
-        const product = new Product(title, description, price, null, code, stock,category)
+        const {
+            title,
+            price,
+            description,
+            code,
+            stock,
+            category
+        } = data;
+        const product = new Product(title, description, price, null, code, stock, category)
         const result = await productManager.addProduct(product);
-        if (result._id != undefined){
+        if (result._id != undefined) {
             product._id = result.id;
             socketServer.emit("product-added", product);
         }
     })
 
     socket.on("message", async data => {
-        console.log("data",data)
+        console.log("data", data)
         await messageManager.addMessage(data.user, data.message);
         const messages = await messageManager.getAllMessages();
         socketServer.emit("messagesLogs", messages);

@@ -10,14 +10,32 @@ const messageManagerDB = new MessageManagerDB();
 const cartManagerDB = new CartManagerDB();
 
 router.get("/", async (req, res) => {
-    const products = await productManager.getAllProducts();
-
     res.render(
         "home",
         {
-            title: "Products",
-            products: products,
+            title: "Home",
             style: "index.css",
+        }
+    )
+    // const products = await productManager.getAllProducts();
+
+    // res.render(
+    //     "home",
+    //     {
+    //         title: "Products",
+    //         products: products,
+    //         style: "index.css",
+    //     }
+    // )
+});
+
+router.get("/login", async (req, res) => {
+    res.render(
+        "login",
+        {
+            title: "Logueo",
+            style: "index.css",
+            failLogin: req.session.failLogin ?? false
         }
     )
 });
