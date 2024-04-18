@@ -1,6 +1,3 @@
-import {
-    ProductCartDB
-} from '../models/Cart.js';
 import cartModel from './models/cartModel.js'
 import productModel from './models/productModel.js'
 import mongoose from 'mongoose';
@@ -47,14 +44,14 @@ export default class CartManagerDB {
         if (!product) {
             throw new Error('Product does not exist');
         }
-        if (cart.productsCart.length != 0 && cart.productsCart.find(product => product._id.toString() === idProduct)) {
-            cart.productsCart.find(product => product._id.toString() === idProduct).quantity += 1;
+        if (cart.productsCart.length != 0 && cart.productsCart.find(product => product.product.toString() === idProduct)) {
+            cart.productsCart.find(product => product.product.toString() === idProduct).quantity += 1;
             const result = await cartModel.updateOne({
                 _id: idCart
             }, cart);
             return result;
         } else {
-            cart.productsCart.push(new ProductCartDB(idProduct, 1));
+            cart.productsCart.push({product: idProduct, quantity: 1});
             const result = await cartModel.updateOne({
                 _id: idCart
             }, cart);
