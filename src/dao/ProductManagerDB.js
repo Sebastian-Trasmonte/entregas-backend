@@ -102,7 +102,7 @@ export default class ProductManagerDB {
         }
     }
     updateProduct = async (idProduct, updatedFields) => {
-        if (!mongoose.Types.ObjectId.isValid(id)) {
+        if (!mongoose.Types.ObjectId.isValid(idProduct)) {
             return "Id product is an invalid mongoose id"
         }
         try {
