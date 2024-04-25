@@ -39,7 +39,7 @@ app.use(express.urlencoded({
 app.use(express.static("public"));
 app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);
-app.use("/realtimeproducts", viewsRouter);
+app.use("/", viewsRouter);
 app.use("api/session", sessionRouter);
 
 app.engine("handlebars", handlebars.engine());
@@ -51,7 +51,8 @@ app.use(session({
         mongoUrl: conectionString,
         mongoOptions: {
             useUnifiedTopology: true
-        }
+        },
+        ttl: 600
     }),
     secret: "secreto",
     resave: false,

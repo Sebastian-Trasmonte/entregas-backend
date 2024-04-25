@@ -3,18 +3,19 @@ import { Router } from "express";
 import ProductManager from "../dao/ProductManagerDB.js";
 import MessageManagerDB from "../dao/MessageManagerDB.js";
 import CartManagerDB from "../dao/CartManagerDB.js";
-
+import {auth }from "../middlewares/auth.js";
 const router = Router();
 const productManager = new ProductManager();
 const messageManagerDB = new MessageManagerDB();
 const cartManagerDB = new CartManagerDB();
 
-router.get("/", async (req, res) => {
+router.get("/", auth , async (req, res) => {
     res.render(
         "home",
         {
             title: "Home",
             style: "index.css",
+            name: req.session.user.first_name
         }
     )
     // const products = await productManager.getAllProducts();
@@ -33,9 +34,18 @@ router.get("/login", async (req, res) => {
     res.render(
         "login",
         {
-            title: "Logueo",
             style: "index.css",
-            failLogin: req.session.failLogin ?? false
+            failLogin: req.session?.failLogin ?? false
+        }
+    )
+});
+
+router.get("/register", async (req, res) => {
+    res.render(
+        "register",
+        {
+            style: "index.css",
+            failLogin: req.session?.failLogin ?? false
         }
     )
 });
