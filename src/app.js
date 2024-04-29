@@ -64,9 +64,6 @@ app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
 
-
-
-
 const PORT = 8080;
 const htppServer = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
