@@ -6,8 +6,9 @@ import userModel from "../dao/models/userModel.js";
 
 const router = Router();
 
-router.get("/register", async (req, res) => {
+router.post("/register", async (req, res) => {
     try {
+        console.log("session register",req.session)
         req.session.failRegister = false;
         const user = req.body;
         await userModel.create(user);
@@ -18,9 +19,9 @@ router.get("/register", async (req, res) => {
     }
 });
 
-
-router.get("/login", async (req, res) => {
+router.post("/login", async (req, res) => {
     try {
+        console.log("session login",req.session)
         req.session.failLogin = false;
         const {
             email,
@@ -51,7 +52,7 @@ router.get("/login", async (req, res) => {
     }
 });
 
-router.get("/logout", async (req, res) => {
+router.post("/logout", async (req, res) => {
     req.session.user = null;
     res.redirect("/login");
 });

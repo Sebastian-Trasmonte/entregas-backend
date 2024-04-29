@@ -19,6 +19,7 @@ import mongoose from 'mongoose';
 import sessionRouter from './routes/user.router.js';
 import session from 'express-session';
 import mongoStore from 'connect-mongo';
+import cookieParser from 'cookie-parser';
 
 const __filename = fileURLToPath(
     import.meta.url);
@@ -40,11 +41,13 @@ app.use(express.static("public"));
 app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/", viewsRouter);
-app.use("api/session", sessionRouter);
+app.use("/api/session", sessionRouter);
 
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
+
+app.use(cookieParser("random"));
 
 app.use(session({
     store: mongoStore.create({
@@ -55,10 +58,9 @@ app.use(session({
         ttl: 600
     }),
     secret: "secreto",
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true
 }));
-
 
 
 const PORT = 8080;
