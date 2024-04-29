@@ -3,14 +3,11 @@ import {
 } from "express";
 import userModel from "../dao/models/userModel.js";
 import {
-    createHash,
-    isValidPassword
+    createHash
 } from "../helpers/utils.js";
 import passport from "passport";
-import local from "passport-local";
 
 const router = Router();
-const localStrategy = local.Strategy;
 
 router.post("/register",
     passport.authenticate("register", {
@@ -44,7 +41,7 @@ router.post("/login",
                 req.session.failLogin = true;
                 res.redirect("/login");
             }
-    
+
             req.session.user = {
                 first_name: req.user.first_name,
                 last_name: req.user.last_name,
@@ -53,7 +50,7 @@ router.post("/login",
                 role: req.user.role
             }
             req.session.failLogin = false;
-      
+
             delete user.password;
             req.session.user = user;
 
@@ -96,5 +93,22 @@ router.post("/forgotPassword", async (req, res) => {
 
     res.redirect("/login");
 });
+
+router.get("/login/github",
+    passport.authenticate("github", {
+        scope: ["user:email"]
+    }),
+    async (req, res) => {
+        res.send("Session API");
+    });
+
+router.get("/githubcallback",
+    passport.authenticate("github", {
+        failureRedirect: "/login"
+    }),
+    async (req, res) => {
+        req.session.user = req.user;
+        res.redirect('/');
+    });
 
 export default router;
