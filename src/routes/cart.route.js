@@ -2,11 +2,12 @@ import {
   Router
 } from "express";
 import CartManager from '../dao/CartManagerDB.js';
+import {admin} from '../middlewares/auth.js';
 
 const router = Router();
 const cartManager = new CartManager();
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', admin,async (req, res) => {
   try {
     const cartId = req.params.id;
     res.send(await cartManager.getCartById(cartId));
@@ -19,7 +20,7 @@ router.get('/:id', async (req, res) => {
 
 });
 
-router.post('/', async (req, res) => {
+router.post('/', admin,async (req, res) => {
   try {
     res.send(await cartManager.addCart());
   } catch (error) {
@@ -30,7 +31,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.post('/:id/product/:productId', async (req, res) => {
+router.post('/:id/product/:productId',admin, async (req, res) => {
   try {
     const cartId = req.params.id;
     const productId = req.params.productId;
@@ -43,7 +44,7 @@ router.post('/:id/product/:productId', async (req, res) => {
   }
 });
 
-router.delete('/:id/product/:productId', async (req, res) => {
+router.delete('/:id/product/:productId',admin, async (req, res) => {
   try {
     const {
       id,
@@ -57,7 +58,7 @@ router.delete('/:id/product/:productId', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',admin, async (req, res) => {
   try {
     const cartId = req.params.id;
     res.send(await cartManager.deleteAllproductsFromCart(cartId));
@@ -68,7 +69,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-router.put('/:id/product/:productId', async (req, res) => {
+router.put('/:id/product/:productId',admin, async (req, res) => {
   try {
     const {
       id,
@@ -83,7 +84,7 @@ router.put('/:id/product/:productId', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id',admin, async (req, res) => {
   try {
     const {
       id

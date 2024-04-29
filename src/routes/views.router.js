@@ -3,13 +3,13 @@ import { Router } from "express";
 import ProductManager from "../dao/ProductManagerDB.js";
 import MessageManagerDB from "../dao/MessageManagerDB.js";
 import CartManagerDB from "../dao/CartManagerDB.js";
-import {auth }from "../middlewares/auth.js";
+import {auth,admin }from "../middlewares/auth.js";
 const router = Router();
 const productManager = new ProductManager();
 const messageManagerDB = new MessageManagerDB();
 const cartManagerDB = new CartManagerDB();
 
-router.get("/", auth , async (req, res) => {
+router.get("/", admin , async (req, res) => {
     const products = await productManager.getAllProducts();
     res.render(
         "home",
@@ -43,7 +43,7 @@ router.get("/register", async (req, res) => {
     )
 });
 
-router.get("/messages", async (req, res) => {
+router.get("/messages", admin,async (req, res) => {
  
     const messages = await messageManagerDB.getAllMessages();
     res.render(
@@ -56,7 +56,7 @@ router.get("/messages", async (req, res) => {
     )
 });
 
-router.get("/products",auth , async (req, res) => {
+router.get("/products", auth , async (req, res) => {
     const { limit = 10, page = 1, sort, query } = req.query;
 
     if (limit !== undefined && isNaN(limit)) {
