@@ -4,11 +4,12 @@ import ProductManagerDB from "../dao/ProductManagerDB.js";
 import Product from "../models/Product.js";
 import {uploader} from '../helpers/utils.js';
 import {socketServer} from '../app.js';
+import {admin} from '../middlewares/auth.js';
 
 const router = Router();
 const productManager = new ProductManagerDB();
 
-router.get('/', async (req, res) => {
+router.get('/', admin, async (req, res) => {
     const { limit = 10, page = 1, sort, query } = req.query;
     
     if (limit !== undefined && isNaN(limit)) {
@@ -30,12 +31,12 @@ router.get('/', async (req, res) => {
     res.send(await productManager.getAllProductsWithFilters(limit,page,sortOrder,query));
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id',admin, async (req, res) => {
     const productId = req.params.id;
     res.send(await productManager.getProductsById(productId));
 });
 
-router.post('/', async (req, res) => {
+router.post('/',admin, async (req, res) => {
     const {title, description, price, thumbnail, code, stock, status,category}= req.body;
     const product = new Product(title, description, price, thumbnail, code, stock, status,category)
     const result = await productManager.addProduct(product);
@@ -46,12 +47,12 @@ router.post('/', async (req, res) => {
     res.send(result);
 });
 
-router.post('/imgToProduct',uploader.single('file') , async (req, res) => {
+router.post('/imgToProduct',admin,uploader.single('file') , async (req, res) => {
     const {idProduct}= req.body;
     res.send(await productManager.addImageToProduct(idProduct, req.file));
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id',admin, async (req, res) => {
     try {
         const productId = req.params.id;
         const updatedFields = req.body;
@@ -61,7 +62,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',admin, async (req, res) => {
     const productId = req.params.id;
     const result = await productManager.removeProductById(productId);
     socketServer.emit("product-deleted", productId);

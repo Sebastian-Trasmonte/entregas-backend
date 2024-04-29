@@ -94,3 +94,11 @@ socket.on("newUser", data => {
         position: "top-right"
     })
 })
+
+function logout(){
+    fetch("/api/session/logout", {
+        method: "POST"
+    }).then(() => {
+        window.location.href = "/login";
+    });
+}

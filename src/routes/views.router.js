@@ -3,26 +3,47 @@ import { Router } from "express";
 import ProductManager from "../dao/ProductManagerDB.js";
 import MessageManagerDB from "../dao/MessageManagerDB.js";
 import CartManagerDB from "../dao/CartManagerDB.js";
-
+import {auth,admin }from "../middlewares/auth.js";
 const router = Router();
 const productManager = new ProductManager();
 const messageManagerDB = new MessageManagerDB();
 const cartManagerDB = new CartManagerDB();
 
-router.get("/", async (req, res) => {
+router.get("/", admin , async (req, res) => {
     const products = await productManager.getAllProducts();
-
     res.render(
         "home",
         {
             title: "Products",
             products: products,
             style: "index.css",
+            name: req.session.user.first_name,
+            role: req.session.user.role
         }
     )
 });
 
-router.get("/messages", async (req, res) => {
+router.get("/login", async (req, res) => {
+    res.render(
+        "login",
+        {
+            style: "index.css",
+            failLogin: req.session?.failLogin ?? false
+        }
+    )
+});
+
+router.get("/register", async (req, res) => {
+    res.render(
+        "register",
+        {
+            style: "index.css",
+            failLogin: req.session?.failLogin ?? false
+        }
+    )
+});
+
+router.get("/messages", admin,async (req, res) => {
  
     const messages = await messageManagerDB.getAllMessages();
     res.render(
@@ -35,7 +56,7 @@ router.get("/messages", async (req, res) => {
     )
 });
 
-router.get("/products", async (req, res) => {
+router.get("/products", auth , async (req, res) => {
     const { limit = 10, page = 1, sort, query } = req.query;
 
     if (limit !== undefined && isNaN(limit)) {
@@ -75,12 +96,14 @@ router.get("/products", async (req, res) => {
             prevPage: result.prevPage,   
             limit: limit,
             sort: sort,
-            query: query   
+            query: query,
+            name: req.session.user.first_name,
+            role: req.session.user.role
         }
     )
 });
 
-router.get("/productDetail/:id", async (req, res) => {
+router.get("/productDetail/:id", auth ,async (req, res) => {
     const id = req.params.id;
     const product = await productManager.getProductsById(id);
     res.render(
@@ -93,7 +116,7 @@ router.get("/productDetail/:id", async (req, res) => {
     )
 });
 
-router.get('/cart/:id', async (req, res) => {
+router.get('/cart/:id',auth , async (req, res) => {
     const id = req.params.id;
     const cart = await cartManagerDB.getCartById(id);
  
