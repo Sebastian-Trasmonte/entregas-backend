@@ -43,6 +43,15 @@ router.get("/register", async (req, res) => {
     )
 });
 
+router.get("/forgotPassword", async (req, res) => {
+    res.render(
+        "forgotPassword",
+        {
+            style: "index.css",
+        }
+    )
+});
+
 router.get("/messages", admin,async (req, res) => {
  
     const messages = await messageManagerDB.getAllMessages();

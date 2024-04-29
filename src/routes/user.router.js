@@ -1,8 +1,8 @@
 import {
     Router
 } from "express";
-
 import userModel from "../dao/models/userModel.js";
+import {createHash,isValidPassword} from "../helpers/utils.js";
 
 const router = Router();
 
@@ -11,6 +11,7 @@ router.post("/register", async (req, res) => {
         req.session.failRegister = false;
         const user = req.body;
         user.role = "usuario";
+        user.password = createHash(user.password);
         await userModel.create(user);
         res.redirect("/login");
     } catch (e) {
@@ -36,7 +37,7 @@ router.post("/login", async (req, res) => {
             return;
         }
 
-        if (user.password !== password) {
+        if (!isValidPassword(user, password)) {
             req.session.failLogin = true;
             res.redirect("/login");
             return;
@@ -59,6 +60,18 @@ router.post("/login", async (req, res) => {
 router.post("/logout", async (req, res) => {
     req.session.user = null;
     res.redirect("/login");
+});
+
+router.post("/forgotPassword", async (req, res) => {
+    const { email, password } = req.body;
+
+        let hashedPassword = createHash(password);
+        await userModel.findOneAndUpdate(
+            { email: email },
+            { password: hashedPassword }
+        );
+
+        res.redirect("/login");
 });
 
 export default router;
