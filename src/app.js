@@ -20,6 +20,8 @@ import sessionRouter from './routes/user.router.js';
 import session from 'express-session';
 import mongoStore from 'connect-mongo';
 import cookieParser from 'cookie-parser';
+import passport from 'passport';
+import inicializatePassport from './config/passportConfig.js';
 
 const __filename = fileURLToPath(
     import.meta.url);
@@ -54,6 +56,9 @@ app.use(session({
     resave: false, // prevents unnecessary session saves if the session wasn't modified.
     saveUninitialized: false // avoids saving empty sessions.
 }));
+inicializatePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);

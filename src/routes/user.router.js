@@ -2,60 +2,79 @@ import {
     Router
 } from "express";
 import userModel from "../dao/models/userModel.js";
-import {createHash,isValidPassword} from "../helpers/utils.js";
+import {
+    createHash,
+    isValidPassword
+} from "../helpers/utils.js";
+import passport from "passport";
+import local from "passport-local";
 
 const router = Router();
+const localStrategy = local.Strategy;
 
-router.post("/register", async (req, res) => {
-    try {
-        req.session.failRegister = false;
-        const user = req.body;
-        user.role = "usuario";
-        user.password = createHash(user.password);
-        await userModel.create(user);
-        res.redirect("/login");
-    } catch (e) {
-        req.session.failRegister = true;
-        res.redirect("/register");
-    }
-});
+router.post("/register",
+    passport.authenticate("register", {
+        failureRedirect: "/api/ssesion/failRegister",
+    }),
+    async (req, res) => {
+        try {
+            req.session.failRegister = false;
+            res.redirect("/login");
+        } catch (e) {
+            req.session.failRegister = true;
+            res.redirect("/register");
+        }
+    });
 
-router.post("/login", async (req, res) => {
-    try {
-        req.session.failLogin = false;
-        const {
-            email,
-            password
-        } = req.body;
-        const user = await userModel.findOne({
-            email
+router.get("/failRegister",
+    (req, res) => {
+        res.status(400).send({
+            message: "Error al registrar usuario",
+            status: "error"
         });
+    });
 
-        if (!user) {
+router.post("/login",
+    passport.authenticate("login", {
+        failureRedirect: "/api/session/failLogin"
+    }),
+    async (req, res) => {
+        try {
+            if (!req.user) {
+                req.session.failLogin = true;
+                res.redirect("/login");
+            }
+    
+            req.session.user = {
+                first_name: req.user.first_name,
+                last_name: req.user.last_name,
+                email: req.user.email,
+                age: req.user.age,
+                role: req.user.role
+            }
+            req.session.failLogin = false;
+      
+            delete user.password;
+            req.session.user = user;
+
+            if (user.role === "admin") {
+                res.redirect("/");
+                return;
+            }
+            res.redirect("/products");
+        } catch (e) {
             req.session.failLogin = true;
             res.redirect("/login");
-            return;
         }
+    });
 
-        if (!isValidPassword(user, password)) {
-            req.session.failLogin = true;
-            res.redirect("/login");
-            return;
-        }
-        delete user.password;
-        req.session.user = user;
-
-        
-        if (user.role === "admin") {
-            res.redirect("/");
-            return;
-        }
-        res.redirect("/products");
-    } catch (e) {
-        req.session.failLogin = true;
-        res.redirect("/login");
-    }
-});
+router.get("/failLogin",
+    (req, res) => {
+        res.status(400).send({
+            message: "Error al loguear usuario",
+            status: "error"
+        });
+    });
 
 router.post("/logout", async (req, res) => {
     req.session.user = null;
@@ -63,15 +82,19 @@ router.post("/logout", async (req, res) => {
 });
 
 router.post("/forgotPassword", async (req, res) => {
-    const { email, password } = req.body;
+    const {
+        email,
+        password
+    } = req.body;
 
-        let hashedPassword = createHash(password);
-        await userModel.findOneAndUpdate(
-            { email: email },
-            { password: hashedPassword }
-        );
+    let hashedPassword = createHash(password);
+    await userModel.findOneAndUpdate({
+        email: email
+    }, {
+        password: hashedPassword
+    });
 
-        res.redirect("/login");
+    res.redirect("/login");
 });
 
 export default router;
