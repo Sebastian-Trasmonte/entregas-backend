@@ -9,6 +9,8 @@ import {
 } from "../helpers/utils.js";
 
 const localStrategy = local.Strategy;
+const clientId = "";
+const clientSecret = "";
 const inicializatePassport = () => {
     passport.use('register', new localStrategy({
             passReqToCallback: true,
@@ -92,8 +94,8 @@ const inicializatePassport = () => {
         }
     });
     passport.use(new GitHubStrategy({
-            clientID: "Iv1.766d397c957685d7",
-            clientSecret: "98bb19be02792f683224496980ba5c14f4121e14",
+            clientID: clientId,
+            clientSecret: clientSecret,
             callbackURL: "http://localhost:8080/api/session/githubcallback"
         },
         async (accessToken, refreshToken, profile, done) => {
