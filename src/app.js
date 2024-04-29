@@ -37,15 +37,8 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }));
-app.use(express.static("public"));
-app.use("/api/products", productRouter);
-app.use("/api/cart", cartRouter);
-app.use("/", viewsRouter);
-app.use("/api/session", sessionRouter);
 
-app.engine("handlebars", handlebars.engine());
-app.set("views", `${__dirname}/views`);
-app.set("view engine", "handlebars");
+app.use(express.static("public"));
 
 app.use(cookieParser("random"));
 
@@ -58,9 +51,20 @@ app.use(session({
         ttl: 600
     }),
     secret: "secreto",
-    resave: true,
-    saveUninitialized: true
+    resave: false, // prevents unnecessary session saves if the session wasn't modified.
+    saveUninitialized: false // avoids saving empty sessions.
 }));
+
+app.use("/api/products", productRouter);
+app.use("/api/cart", cartRouter);
+app.use("/", viewsRouter);
+app.use("/api/session", sessionRouter);
+
+app.engine("handlebars", handlebars.engine());
+app.set("views", `${__dirname}/views`);
+app.set("view engine", "handlebars");
+
+
 
 
 const PORT = 8080;

@@ -10,24 +10,17 @@ const messageManagerDB = new MessageManagerDB();
 const cartManagerDB = new CartManagerDB();
 
 router.get("/", auth , async (req, res) => {
+    const products = await productManager.getAllProducts();
     res.render(
         "home",
         {
-            title: "Home",
+            title: "Products",
+            products: products,
             style: "index.css",
-            name: req.session.user.first_name
+            name: req.session.user.first_name,
+            role: req.session.user.role
         }
     )
-    // const products = await productManager.getAllProducts();
-
-    // res.render(
-    //     "home",
-    //     {
-    //         title: "Products",
-    //         products: products,
-    //         style: "index.css",
-    //     }
-    // )
 });
 
 router.get("/login", async (req, res) => {
@@ -63,7 +56,7 @@ router.get("/messages", async (req, res) => {
     )
 });
 
-router.get("/products", async (req, res) => {
+router.get("/products",auth , async (req, res) => {
     const { limit = 10, page = 1, sort, query } = req.query;
 
     if (limit !== undefined && isNaN(limit)) {
@@ -103,12 +96,14 @@ router.get("/products", async (req, res) => {
             prevPage: result.prevPage,   
             limit: limit,
             sort: sort,
-            query: query   
+            query: query,
+            name: req.session.user.first_name,
+            role: req.session.user.role
         }
     )
 });
 
-router.get("/productDetail/:id", async (req, res) => {
+router.get("/productDetail/:id", auth ,async (req, res) => {
     const id = req.params.id;
     const product = await productManager.getProductsById(id);
     res.render(
@@ -121,7 +116,7 @@ router.get("/productDetail/:id", async (req, res) => {
     )
 });
 
-router.get('/cart/:id', async (req, res) => {
+router.get('/cart/:id',auth , async (req, res) => {
     const id = req.params.id;
     const cart = await cartManagerDB.getCartById(id);
  

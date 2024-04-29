@@ -2,21 +2,20 @@
     <h1>Registrarse</h1>
     <hr>
     <form class="box" method="post" action="/api/session/register">
-
         <label for="first_name">First Name</label>
-        <input type="text" name="first_name" id="first_name">
+        <input type="text" name="first_name" id="first_name" required="true">
 
         <label for="last_name">Last Name</label>
-        <input type="text" name="last_name" id="last_name">
+        <input type="text" name="last_name" id="last_name" required="true">
 
         <label for="email">Email</label>
-        <input type="email" name="email" id="email">
+        <input type="email" name="email" id="email" required="true">
 
         <label for="age">Age</label>
-        <input type="number" name="age" id="age">
+        <input type="number" name="age" id="age" required="true">
 
         <label for="password">Password</label>
-        <input type="password" name="password" id="password">
+        <input type="password" name="password" id="password" required="true">
 
         <button type="submit">Register</button>
     </form>

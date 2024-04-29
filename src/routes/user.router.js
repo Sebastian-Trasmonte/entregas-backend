@@ -8,9 +8,9 @@ const router = Router();
 
 router.post("/register", async (req, res) => {
     try {
-        console.log("session register",req.session)
         req.session.failRegister = false;
         const user = req.body;
+        user.role = "usuario";
         await userModel.create(user);
         res.redirect("/login");
     } catch (e) {
@@ -21,7 +21,6 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
     try {
-        console.log("session login",req.session)
         req.session.failLogin = false;
         const {
             email,
@@ -45,7 +44,12 @@ router.post("/login", async (req, res) => {
         delete user.password;
         req.session.user = user;
 
-        res.redirect("/api/products");
+        
+        if (user.role === "admin") {
+            res.redirect("/");
+            return;
+        }
+        res.redirect("/products");
     } catch (e) {
         req.session.failLogin = true;
         res.redirect("/login");
