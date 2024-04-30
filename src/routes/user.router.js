@@ -37,6 +37,7 @@ router.post("/login",
     }),
     async (req, res) => {
         try {
+    
             if (!req.user) {
                 req.session.failLogin = true;
                 res.redirect("/login");
@@ -51,10 +52,7 @@ router.post("/login",
             }
             req.session.failLogin = false;
 
-            delete user.password;
-            req.session.user = user;
-
-            if (user.role === "admin") {
+            if (req.user.role === "admin") {
                 res.redirect("/");
                 return;
             }
@@ -108,7 +106,11 @@ router.get("/githubcallback",
     }),
     async (req, res) => {
         req.session.user = req.user;
-        res.redirect('/');
+        if (req.user.role === "admin") {
+            res.redirect("/");
+            return;
+        }
+        res.redirect("/products");
     });
 
 export default router;

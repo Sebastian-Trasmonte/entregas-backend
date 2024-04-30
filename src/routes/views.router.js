@@ -131,9 +131,7 @@ router.get('/cart/:id',auth , async (req, res) => {
  
     let total = 0;
     for (let item of cart.productsCart) {
-        console.log("item",item);
         total += item.product.price * item.quantity;
-        console.log("total",total);
     }
 
     const products = cart.productsCart.map(product => {

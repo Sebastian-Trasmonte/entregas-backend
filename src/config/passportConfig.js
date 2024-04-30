@@ -9,8 +9,8 @@ import {
 } from "../helpers/utils.js";
 
 const localStrategy = local.Strategy;
-const clientId = "";
-const clientSecret = "";
+const clientId = "Iv1.766d397c957685d7";
+const clientSecret = "98bb19be02792f683224496980ba5c14f4121e14";
 const inicializatePassport = () => {
     passport.use('register', new localStrategy({
             passReqToCallback: true,
@@ -41,7 +41,7 @@ const inicializatePassport = () => {
                     email,
                     age,
                     password: createHash(password),
-                    role: "user"
+                    role: "usuario"
                 };
 
                 const result = await userModel.create(newUser);
@@ -58,11 +58,9 @@ const inicializatePassport = () => {
         },
         async (req,username, password, done) => {
             try {
-             
                 const user = await userModel.findOne({
                     email: username
                 });
-              
                 if (!user) {
                     return done(null, false, {
                         message: "User not found"
@@ -100,7 +98,6 @@ const inicializatePassport = () => {
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                console.log(profile);
                 let user = await userModel.findOne({
                     email: profile._json.login
                 });
