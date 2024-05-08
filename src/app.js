@@ -93,7 +93,7 @@ socketServer.on("connection", (socket) => {
             stock,
             category
         } = data;
-        const product = new Product(title, description, price, null, code, stock, category)
+        const product = new Product(title, description, price, null, code, stock,true, category)
         const result = await productManager.addProduct(product);
         if (result._id != undefined) {
             product._id = result.id;

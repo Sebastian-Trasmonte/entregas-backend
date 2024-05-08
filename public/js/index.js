@@ -17,7 +17,7 @@ function addProduct() {
     const stock = document.getElementById('productStock').value;
     const category = document.getElementById('productCategory').value;
 
-    if (title && price && description && code && stock) {
+    if (title && price && description && code && stock && category) {
         socket.emit("add-product", {
             title,
             price,
