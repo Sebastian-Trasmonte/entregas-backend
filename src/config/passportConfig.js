@@ -4,13 +4,13 @@ import GitHubStrategy from "passport-github2";
 
 import userModel from  "../dao/models/userModel.js";
 import {
-    createHash,
     isValidPassword
 } from "../helpers/utils.js";
 
 const localStrategy = local.Strategy;
 const clientId = "Iv1.766d397c957685d7";
 const clientSecret = "98bb19be02792f683224496980ba5c14f4121e14";
+
 const inicializatePassport = () => {
     passport.use('register', new localStrategy({
             passReqToCallback: true,
@@ -40,8 +40,7 @@ const inicializatePassport = () => {
                     last_name,
                     email,
                     age,
-                    password: createHash(password),
-                    role: "usuario"
+                    password: password
                 };
 
                 const result = await userModel.create(newUser);
@@ -91,6 +90,7 @@ const inicializatePassport = () => {
             done(error.message);
         }
     });
+
     passport.use(new GitHubStrategy({
             clientID: clientId,
             clientSecret: clientSecret,
@@ -106,8 +106,7 @@ const inicializatePassport = () => {
                 }
                 const newUser = {
                     first_name: profile._json.name,
-                    email: profile._json.login,
-                    role: "user",
+                    email: profile._json.login
                 };
                 const result = await userModel.create(newUser);
                 return done(null, result);

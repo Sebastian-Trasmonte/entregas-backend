@@ -1,14 +1,17 @@
 import mongoose from "mongoose";
+import {createHash} from "../../helpers/utils.js";
 
 const userCollection = "users";
 
 const userSchema = new mongoose.Schema({
     first_name: {
         type: String,
-        required: true
+        required: true,
+        minLength: 5
     },
     last_name: {
-        type: String
+        type: String,
+        minLength: 5
     },
     email: {
         type: String,
@@ -23,8 +26,24 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        required: true
+        required: true,
+        default: "user"
+    },
+    cart: {
+        type: [{
+            cart: {
+                type: mongoose.Schema.ObjectId,
+                ref: "carts"
+            }
+        }],
+        default: []
     }
+});
+
+
+userSchema.pre("save", function (next) {
+    this.password = createHash(this.password);
+    next();
 });
 
 const userModel = mongoose.model(userCollection, userSchema);

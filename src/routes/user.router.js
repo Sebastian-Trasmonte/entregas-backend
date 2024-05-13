@@ -113,4 +113,8 @@ router.get("/githubcallback",
         res.redirect("/products");
     });
 
+router.get("/current", async (req, res) => {
+    res.send(req.session.user);
+})
+ 
 export default router;
