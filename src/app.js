@@ -22,6 +22,9 @@ import mongoStore from 'connect-mongo';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import inicializatePassport from './config/passportConfig.js';
+import config from './config/config.js';
+
+console.log(config);
 
 const __filename = fileURLToPath(
     import.meta.url);
@@ -31,7 +34,7 @@ const messageManager = new MessageManagerDB();
 
 const app = express();
 
-const conectionString = "mongodb+srv://tpCoder:iEkbrfkVja0LHEwh@cluster0.uswvjfi.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=Cluster0";
+const conectionString = config.mongo_url;
 
 mongoose.connect(conectionString);
 
@@ -69,7 +72,7 @@ app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
 
-const PORT = 8080;
+const PORT = config.port;
 const htppServer = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
@@ -112,10 +115,3 @@ socketServer.on("connection", (socket) => {
         socket.broadcast.emit("newUser", data);
     });
 });
-
-
-//98bb19be02792f683224496980ba5c14f4121e14
-//client secret git
-// App ID: 884256
-
-// Client ID: Iv1.766d397c957685d7

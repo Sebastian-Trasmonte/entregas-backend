@@ -1,15 +1,16 @@
 import passport from "passport";
 import local from "passport-local";
 import GitHubStrategy from "passport-github2";
-
+import config from "./config.js";
 import userModel from  "../dao/models/userModel.js";
 import {
     isValidPassword
 } from "../helpers/utils.js";
 
+
 const localStrategy = local.Strategy;
-const clientId = "Iv1.766d397c957685d7";
-const clientSecret = "98bb19be02792f683224496980ba5c14f4121e14";
+const clientId = config.client_id;
+const clientSecret = config.client_secret;
 
 const inicializatePassport = () => {
     passport.use('register', new localStrategy({
