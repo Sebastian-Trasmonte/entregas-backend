@@ -1,16 +1,16 @@
 import { Router } from "express";
-//import ProductManager from "../dao/ProductManagerFS.js";
-import ProductManager from "../dao/ProductManagerDB.js";
 import MessageManagerDB from "../dao/MessageManagerDB.js";
-import CartManagerDB from "../dao/CartManagerDB.js";
 import {auth,admin }from "../middlewares/auth.js";
+import ProductController from "../controllers/ProductController.js";
+import CartController from "../controllers/cartController.js";
+
 const router = Router();
-const productManager = new ProductManager();
+const productController = new ProductController();
 const messageManagerDB = new MessageManagerDB();
-const cartManagerDB = new CartManagerDB();
+const cartController = new CartController();
 
 router.get("/", admin , async (req, res) => {
-    const products = await productManager.getAllProducts();
+    const products = await productController.getAllProducts();
     res.render(
         "home",
         {
@@ -77,14 +77,7 @@ router.get("/products", auth , async (req, res) => {
         res.status(400).send({ error: 'Page must be a number' });
         return;
     }
-    let sortOrder;
-    if (sort === 'asc') {
-        sortOrder = { price: 1 }; // Orden ascendente por precio
-    } else if (sort === 'desc') {
-        sortOrder = { price: -1 }; // Orden descendente por precio
-    }
-
-    const result = await productManager.getAllProductsWithFilters(limit,page,sortOrder,query);
+    const result = await productController.getAllProductsWithFilters(limit,page,sort,query);
         
     const products = result.docs.map(product => {
         return product.toObject({ getters: true });
@@ -114,7 +107,7 @@ router.get("/products", auth , async (req, res) => {
 
 router.get("/productDetail/:id", auth ,async (req, res) => {
     const id = req.params.id;
-    const product = await productManager.getProductsById(id);
+    const product = await productController.getProductsById(id);
     res.render(
         "productDetail",
         {
@@ -127,7 +120,7 @@ router.get("/productDetail/:id", auth ,async (req, res) => {
 
 router.get('/cart/:id',auth , async (req, res) => {
     const id = req.params.id;
-    const cart = await cartManagerDB.getCartById(id);
+    const cart = await cartController.getCartById(id);
  
     let total = 0;
     for (let item of cart.productsCart) {
