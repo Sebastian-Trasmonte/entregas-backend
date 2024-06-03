@@ -24,7 +24,6 @@ import passport from 'passport';
 import inicializatePassport from './config/passportConfig.js';
 import config from './config/config.js';
 
-console.log(config);
 
 const __filename = fileURLToPath(
     import.meta.url);

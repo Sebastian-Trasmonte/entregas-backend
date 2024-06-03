@@ -16,5 +16,10 @@ export default {
     port: process.env.PORT,
     mongo_url: process.env.MONGO_URL,
     client_id: process.env.CLIENT_ID,
-    client_secret: process.env.CLIENT_SECRET
+    client_secret: process.env.CLIENT_SECRET,
+    email_user: process.env.EMAIL_USER,
+    email_pass: process.env.EMAIL_PASS,
+    twilio_account_sid: process.env.TWILIO_ACCOUNT_SID,
+    twilio_auth_token: process.env.TWILIO_AUTH_TOKEN,
+    twilio_phone_number: process.env.TWILIO_PHONE_NUMBER
 }

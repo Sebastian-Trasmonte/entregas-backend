@@ -3,9 +3,17 @@ import {
 } from "express";
 import {admin} from '../middlewares/auth.js';
 import CartController from "../controllers/cartController.js";
+import NotificationManager from "../dao/NotificationManager.js";
 
 const router = Router();
 const cartController = new CartController();
+const emailManager = new NotificationManager();
+
+router.get('/',async (req, res) => {
+  emailManager.sendSMS();
+  res.send("sms sent");
+});
+
 
 router.get('/:id', admin,async (req, res) => {
   try {
