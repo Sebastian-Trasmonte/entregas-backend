@@ -1,7 +1,7 @@
 import { Router } from "express";
 import MessageManagerDB from "../dao/MessageManagerDB.js";
 import {auth,admin }from "../middlewares/auth.js";
-import ProductController from "../controllers/ProductController.js";
+import ProductController from "../controllers/productController.js";
 import CartController from "../controllers/cartController.js";
 
 const router = Router();
@@ -52,7 +52,7 @@ router.get("/forgotPassword", async (req, res) => {
     )
 });
 
-router.get("/messages", admin,async (req, res) => {
+router.get("/messages", user,async (req, res) => {
  
     const messages = await messageManagerDB.getAllMessages();
     res.render(

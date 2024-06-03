@@ -1,19 +1,11 @@
 import {
   Router
 } from "express";
-import {admin} from '../middlewares/auth.js';
+import {admin,user} from '../middlewares/auth.js';
 import CartController from "../controllers/cartController.js";
-import NotificationManager from "../dao/NotificationManager.js";
 
 const router = Router();
 const cartController = new CartController();
-const emailManager = new NotificationManager();
-
-router.get('/',async (req, res) => {
-  emailManager.sendSMS();
-  res.send("sms sent");
-});
-
 
 router.get('/:id', admin,async (req, res) => {
   try {
@@ -38,7 +30,7 @@ router.post('/', admin,async (req, res) => {
   }
 });
 
-router.post('/:id/product/:productId',admin, async (req, res) => {
+router.post('/:id/product/:productId',user, async (req, res) => {
   try {
     const cartId = req.params.id;
     const productId = req.params.productId;

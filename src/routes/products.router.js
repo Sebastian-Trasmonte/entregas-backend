@@ -2,13 +2,13 @@ import {Router} from "express";
 import Product from "../models/Product.js";
 import {uploader} from '../helpers/utils.js';
 
-import {admin} from '../middlewares/auth.js';
+import {admin,auth} from '../middlewares/auth.js';
 import ProductController from "../controllers/productController.js";
 
 const router = Router();
 const productController = new ProductController();
 
-router.get('/', admin, async (req, res) => {
+router.get('/', auth, async (req, res) => {
     const { limit = 10, page = 1, sort, query } = req.query;
     if (limit !== undefined && isNaN(limit)) {
         res.status(400).send({ error: 'Limit must be a number' });
