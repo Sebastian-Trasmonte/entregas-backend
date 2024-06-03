@@ -19,7 +19,7 @@ export default class ProductController {
             sortOrder = { price: -1 }; // Orden descendente por precio
         }
 
-        return this.productManager.getAllProductsWithFilters(cartId);
+        return this.productManager.getAllProductsWithFilters(limit,page,sort,query);
     }
 
     async getProductsById(productId) {
