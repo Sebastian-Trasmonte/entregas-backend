@@ -1,7 +1,7 @@
-import NotificationManager from "../dao/NotificationManager";
-import config from "../config";
+import NotificationManager from "../dao/NotificationManager.js";
+import config from '../config/config.js';
 
-export default class EmailController {
+export default class NotificationController {
     constructor() {
         this.notificationManager = new NotificationManager();
     }
@@ -16,5 +16,4 @@ export default class EmailController {
                 throw new Error("Invalid type");
         }
     }
-
 }

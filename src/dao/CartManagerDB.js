@@ -160,4 +160,39 @@ export default class CartManagerDB {
         }, cart);
         return result;
     }
+    purchaseCart = async (idCart) => {
+        let cart = await cartModel.findOne({
+            _id: idCart
+        }).populate('productsCart.product');
+        if (!cart) {
+            throw new Error('Cart does not exist');
+        }
+        let productsWithoutStock = [];
+        let productWithStock = [];
+  
+      
+        for (let product of cart.productsCart) {
+            if (product.product.stock < product.quantity) {
+                console.log('The product ' + product.product.title + ' does not have enough stock')
+                productsWithoutStock.push(product);
+            }
+            else{
+                productWithStock.push(product);
+            }
+        }
+        if (productWithStock.length === 0) {
+            throw new Error('All products dont have enough stock');
+        }
+        for (let product of productWithStock) {
+            product.product.stock -= product.quantity;
+            await productModel.updateOne({
+                _id: product.product._id
+            }, product.product);        
+        }
+        cart.productsCart = productsWithoutStock;
+         await cartModel.updateOne({
+            _id: idCart
+        }, cart);
+        return productWithStock;
+    }    
 }

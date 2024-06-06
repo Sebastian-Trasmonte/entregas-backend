@@ -16,7 +16,6 @@ export default class NotificationManager {
     }
 
     sendEmail = async (info) => {
-        console.log('sending email')
         const mailOptions = {
             from: {
                 name: 'Notification of your purchase',
@@ -26,7 +25,6 @@ export default class NotificationManager {
             subject: info.subject,
             text: info.text
         };
-
         try {
             const result = await this.transporter.sendMail(mailOptions);
             console.log('Email sent: ' + result.response);

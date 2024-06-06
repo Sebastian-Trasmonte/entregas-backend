@@ -1,13 +1,16 @@
 import {
   Router
 } from "express";
-import {admin,user} from '../middlewares/auth.js';
+import {
+  admin,
+  user
+} from '../middlewares/auth.js';
 import CartController from "../controllers/cartController.js";
 
 const router = Router();
 const cartController = new CartController();
 
-router.get('/:id', admin,async (req, res) => {
+router.get('/:id', admin, async (req, res) => {
   try {
     const cartId = req.params.id;
     res.send(await cartController.getCartById(cartId));
@@ -19,7 +22,7 @@ router.get('/:id', admin,async (req, res) => {
   }
 });
 
-router.post('/', admin,async (req, res) => {
+router.post('/', admin, async (req, res) => {
   try {
     res.send(await cartController.addCart());
   } catch (error) {
@@ -30,7 +33,7 @@ router.post('/', admin,async (req, res) => {
   }
 });
 
-router.post('/:id/product/:productId',user, async (req, res) => {
+router.post('/:id/product/:productId', user, async (req, res) => {
   try {
     const cartId = req.params.id;
     const productId = req.params.productId;
@@ -43,7 +46,7 @@ router.post('/:id/product/:productId',user, async (req, res) => {
   }
 });
 
-router.delete('/:id/product/:productId',admin, async (req, res) => {
+router.delete('/:id/product/:productId', admin, async (req, res) => {
   try {
     const {
       id,
@@ -57,7 +60,7 @@ router.delete('/:id/product/:productId',admin, async (req, res) => {
   }
 });
 
-router.delete('/:id',admin, async (req, res) => {
+router.delete('/:id', admin, async (req, res) => {
   try {
     const cartId = req.params.id;
     res.send(await cartController.deleteAllproductsFromCart(cartId));
@@ -68,7 +71,7 @@ router.delete('/:id',admin, async (req, res) => {
   }
 });
 
-router.put('/:id/product/:productId',admin, async (req, res) => {
+router.put('/:id/product/:productId', admin, async (req, res) => {
   try {
     const {
       id,
@@ -83,7 +86,7 @@ router.put('/:id/product/:productId',admin, async (req, res) => {
   }
 });
 
-router.put('/:id',admin, async (req, res) => {
+router.put('/:id', admin, async (req, res) => {
   try {
     const {
       id
@@ -93,6 +96,18 @@ router.put('/:id',admin, async (req, res) => {
   } catch (err) {
     return res.status(500).send({
       error: err.message
+    });
+  }
+});
+
+router.post('/:id/purchase', user, async (req, res) => {
+  try {
+    const cartId = req.params.id;
+    res.send(await cartController.purchaseCart(cartId));
+  } catch (error) {
+    console.log("error", error)
+    return res.status(500).send({
+      error: error.message
     });
   }
 });

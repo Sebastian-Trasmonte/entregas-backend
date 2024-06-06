@@ -1,4 +1,6 @@
 import CartManager from '../dao/CartManagerDB.js';
+import NotificationController from './notificationController.js';
+import config from '../config/config.js';
 
 
 
@@ -6,6 +8,7 @@ export default class CartController {
 
     constructor() {
         this.cartManager = new CartManager();
+        this.notificationController = new NotificationController();
     }
 
     async getCartById(cartId) {
@@ -36,5 +39,15 @@ export default class CartController {
         return await this.cartManager.updateProducts(id, products);
     }
 
-
+    async purchaseCart(cartId) {
+        let productWithStock = await this.cartManager.purchaseCart(cartId);
+        let productsName = productWithStock.map(product => product.product.title).join(', ');
+        let info = {
+            recipient: config.recipient,
+            subject: 'Purchase made',
+            text: 'The purchase was made successfully. The following products were purchased: ' + productsName            
+        };
+        this.notificationController.sendNotification(info);
+        return '';
+    }
 }

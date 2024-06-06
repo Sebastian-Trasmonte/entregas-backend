@@ -1,6 +1,6 @@
 import { Router } from "express";
 import MessageManagerDB from "../dao/MessageManagerDB.js";
-import {auth,admin }from "../middlewares/auth.js";
+import {auth,admin,user }from "../middlewares/auth.js";
 import ProductController from "../controllers/productController.js";
 import CartController from "../controllers/cartController.js";
 
