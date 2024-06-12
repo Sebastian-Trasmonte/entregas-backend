@@ -71,7 +71,7 @@ router.delete('/:id', admin, async (req, res) => {
   }
 });
 
-router.put('/:id/product/:productId', admin, async (req, res) => {
+router.put('/:id/product/:productId', user, async (req, res) => {
   try {
     const {
       id,
