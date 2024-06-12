@@ -17,6 +17,7 @@ import ProductManagerDB from './dao/ProductManagerDB.js';
 import MessageManagerDB from './dao/MessageManagerDB.js';
 import mongoose from 'mongoose';
 import sessionRouter from './routes/user.router.js';
+import testRouter from './routes/test.route.js';
 import session from 'express-session';
 import mongoStore from 'connect-mongo';
 import cookieParser from 'cookie-parser';
@@ -66,6 +67,8 @@ app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/", viewsRouter);
 app.use("/api/session", sessionRouter);
+
+app.use("/mockingproducts", testRouter);
 
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);

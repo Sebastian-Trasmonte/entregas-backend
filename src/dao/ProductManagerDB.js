@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 
 export default class ProductManagerDB {
     addProduct = async (product) => {
+       
         const {
             title,
             description,

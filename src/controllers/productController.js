@@ -28,6 +28,7 @@ export default class ProductController {
 
     async addProduct(product) {
         const result = this.productManager.addProduct(product);
+
         if (result._id != undefined){
             product._id = result._id.toString();
             socketServer.emit("product-added", product);
