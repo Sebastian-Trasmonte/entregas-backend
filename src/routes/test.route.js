@@ -9,6 +9,7 @@ import {
 } from '../helpers/fakerUtils.js';
 import ProductController from "../controllers/productController.js";
 import Product from "../models/Product.js";
+import userModel from "../dao/models/userModel.js";
 
 const router = Router();
 const productController = new ProductController();
@@ -34,6 +35,7 @@ router.get('/generateProduct', async (req, res) => {
 router.get('/', async (req, res) => {
     var resulttest = [];
     resulttest = await ProductTest();
+    resulttest = resulttest.concat(await UserTest());
     res.send(resulttest);
 });
 
@@ -66,6 +68,63 @@ const ProductTest = async () => {
     return resulttest;
 }
 
+const UserTest = async () => {
+    var resulttest = [];
+    resulttest.push({
+        test: 'AddUserFailNameRequired',
+        result: await AddUserFailNameRequired()
+    });
+    resulttest.push({
+        test: 'AddUserOk',
+        result: await AddUserOk()
+    });
+    return resulttest;
+}
+
+// #region UserTests
+
+const AddUserFailNameRequired = async () => {
+    try {
+        var user = generateUser();
+        delete user.first_name;
+        const newUser = {
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            age: user.age,
+            password: user.password,
+            role: user.role
+        };
+        await userModel.create(newUser);
+        return false;
+    } catch (error) {
+        {
+            if (error.message.includes("validation failed: first_name")) {
+                return true;
+            }
+            return false;
+        }
+    }
+}
+
+const AddUserOk = async () => {
+    var user = generateUser();
+    console.log('user', user)
+    const newUser = {
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        age: user.age,
+        password: user.password,
+        role: user.role
+    };
+    var result = await userModel.create(newUser);
+    return result._id != undefined ? true : false;
+}
+
+// #endregion UserTests
+
+// #region ProductTests
 const AddProductFail = async () => {
     try {
         var product = generateProductErrorTitle();
@@ -111,4 +170,5 @@ const DeleteProductNotExists = async () => {
     return result == 'Product id 66754785030970d385a44321 not exists' ? true : false;
 }
 
+// #endregion ProductTests
 export default router;

@@ -7,7 +7,7 @@ export const generateUser = () => {
         last_name: faker.person.lastName(),
         email: faker.internet.email(),
         password: createHash(faker.internet.password()),
-        age: faker.person.age,
+        age: faker.number.int({min: 18, max: 80}),
         role: faker.helpers.arrayElement(["user", "admin"]),
         cart: generateCart()
     };
