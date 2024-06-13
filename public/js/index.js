@@ -38,11 +38,12 @@ socket.on("product-added", (product) => {
     productDiv.innerHTML = `
         <h2>${product.title}</h2>
         <p>ID: ${product._id}</p>
+        <p>Categoria: ${product.category}</p>
         <p>Precio: ${product.price}</p>
         <p>Descripción: ${product.description}</p>
         <p>Código: ${product.code}</p>
         <p>En stock: ${product.stock}</p>
-        <button class="delete-product" onclick="deleteProduct(${product._id})">Delete</button>
+        <button class="delete-product" onclick="deleteProduct('${product._id}')">Eliminar</button>
     `;
     productsContainer.appendChild(productDiv);
 })

@@ -1,14 +1,14 @@
-import ProductManagerDB from "../dao/ProductManagerDB.js";
+import ProductService from '../services/productService.js';
 import {socketServer} from '../app.js';
 
 export default class ProductController {
 
     constructor() {
-        this.productManager = new ProductManagerDB();
+        this.productService = new ProductService();
     }
 
     async getAllProducts() {
-        return this.productManager.getAllProducts();
+        return this.productService.getAllProducts();
     }
 
     async getAllProductsWithFilters(limit,page,sort,query) {
@@ -19,15 +19,15 @@ export default class ProductController {
             sortOrder = { price: -1 }; // Orden descendente por precio
         }
 
-        return this.productManager.getAllProductsWithFilters(limit,page,sort,query);
+        return this.productService.getAllProductsWithFilters(limit,page,sort,query);
     }
 
     async getProductsById(productId) {
-        return this.productManager.getProductsById(productId);
+        return this.productService.getProductsById(productId);
     }
 
     async addProduct(product) {
-        const result = this.productManager.addProduct(product);
+        const result = this.productService.addProduct(product);
 
         if (result._id != undefined){
             product._id = result._id.toString();
@@ -37,15 +37,15 @@ export default class ProductController {
     }
 
     async addImageToProduct(idProduct, file) {
-        return this.productManager.addImageToProduct(idProduct, file);
+        return this.productService.addImageToProduct(idProduct, file);
     }
 
     async updateProduct(productId, updatedFields) {
-        return this.productManager.updateProduct(productId,updatedFields);
+        return this.productService.updateProduct(productId,updatedFields);
     }
 
     async removeProductById(productId) {
-        const result = this.productManager.removeProductById(productId);
+        const result = this.productService.removeProductById(productId);
         socketServer.emit("product-deleted", productId);
         return result
     }
