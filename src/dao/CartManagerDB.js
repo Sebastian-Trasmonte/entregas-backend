@@ -1,3 +1,4 @@
+import { errorsEnum } from '../helpers/errorsEnum.js';
 import cartModel from './models/cartModel.js'
 import productModel from './models/productModel.js'
 import mongoose from 'mongoose';
@@ -65,7 +66,7 @@ export default class CartManagerDB {
 
         try {
             const cart = await cartModel.findById(id).populate('productsCart.product');
-            return cart ?? "Not found";
+            return cart ?? errorsEnum.NOT_FOUND;
         } catch (error) {
             console.error(error.message);
             throw new Error(`Error in find cart by id ${id}`)
@@ -119,7 +120,7 @@ export default class CartManagerDB {
         }
         //validar que el producto exista en el carrito
         if (!cart.productsCart.find(product => product._id.toString() === idProduct)) {
-            throw new Error('Product does not exist in cart');
+            throw new Error(errorsEnum.PRODUCT_NOT_EXISTS_IN_CART);
         }
         cart.productsCart.find(product => product._id.toString() === idProduct).quantity = quantity;
         const result = await cartModel.updateOne({
@@ -132,7 +133,7 @@ export default class CartManagerDB {
             throw new Error('Products must have _id and quantity');
         }
         if (!mongoose.Types.ObjectId.isValid(idCart)) {
-            throw new Error("Id cart is an invalid mongoose id")
+            throw new Error(errorsEnum.INVALID_MONGOOSE_ID)
         }
 
         let cart = await cartModel.findOne({
@@ -140,18 +141,18 @@ export default class CartManagerDB {
         });
 
         if (!cart) {
-            throw new Error('Cart does not exist');
+            throw new Error(errorsEnum.NOT_FOUND);
         }
 
         for (let product of products) {
             if (!isNaN(product._id) || !mongoose.Types.ObjectId.isValid(product._id)) {
-                throw new Error("Id product is an invalid mongoose id")
+                throw new Error(errorsEnum.INVALID_MONGOOSE_ID)
             }
             let productMongo = await productModel.findOne({
                 _id: product._id
             });
             if (!productMongo) {
-                throw new Error(`Product ${product._id} does not exist`);
+                throw new Error(errorsEnum.NOT_FOUND);
             }
         }
         cart.productsCart = products;
@@ -165,7 +166,7 @@ export default class CartManagerDB {
             _id: idCart
         }).populate('productsCart.product');
         if (!cart) {
-            throw new Error('Cart does not exist');
+            throw new Error(errorsEnum.NOT_FOUND);
         }
         let productsWithoutStock = [];
         let productWithStock = [];
@@ -181,7 +182,7 @@ export default class CartManagerDB {
             }
         }
         if (productWithStock.length === 0) {
-            throw new Error('All products dont have enough stock');
+            throw new Error(errorsEnum.ENOUGHT_STOCK);
         }
         for (let product of productWithStock) {
             product.product.stock -= product.quantity;

@@ -1,3 +1,4 @@
+import { errorsEnum } from '../helpers/errorsEnum.js';
 import Product from '../models/Product.js';
 import productModel from './models/productModel.js'
 import mongoose from 'mongoose';
@@ -71,7 +72,7 @@ export default class ProductManagerDB {
     }
     getProductsById = async (id) => {
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return "Id product is an invalid mongoose id"
+            return errorsEnum.INVALID_MONGOOSE_ID;
         }
         try {
             const product = await productModel.findOne({
@@ -85,7 +86,7 @@ export default class ProductManagerDB {
     }
     removeProductById = async (id) => {
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return "Id product is an invalid mongoose id"
+            return errorsEnum.INVALID_MONGOOSE_ID;
         }
         try {
             const result = await productModel.deleteOne({
@@ -93,7 +94,7 @@ export default class ProductManagerDB {
             });
 
             if (result.deletedCount === 0){
-                return (`Product id ${id} not exists`) 
+                return (errorsEnum.NOT_FOUND) 
             }
 
             return result;
@@ -104,7 +105,7 @@ export default class ProductManagerDB {
     }
     updateProduct = async (idProduct, updatedFields) => {
         if (!mongoose.Types.ObjectId.isValid(idProduct)) {
-            return "Id product is an invalid mongoose id"
+            return errorsEnum.INVALID_MONGOOSE_ID;
         }
         try {
             const result = await productModel.updateOne({
@@ -118,7 +119,7 @@ export default class ProductManagerDB {
     }
     addImageToProduct = async (idProduct, file) => {
         if (!mongoose.Types.ObjectId.isValid(idProduct)) {
-            return "Id product is an invalid mongoose id"
+            return errorsEnum.INVALID_MONGOOSE_ID;
         }
         try {
             await productModel.findByIdAndUpdate(

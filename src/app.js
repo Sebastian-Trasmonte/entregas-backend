@@ -104,6 +104,7 @@ socketServer.on("connection", (socket) => {
             product._id = result.id;
             socketServer.emit("product-added", product);
         }
+        
     })
 
     socket.on("message", async data => {

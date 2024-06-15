@@ -1,3 +1,4 @@
+import {errorsEnum} from '../helpers/errorsEnum.js';
 class Product {
     constructor(title, description, price,thumbnail,code,stock,status,category) {
        
@@ -7,7 +8,7 @@ class Product {
             code === undefined || code === null || 
             stock === undefined || stock === null ||
             category === undefined || category === null) {
-            throw new Error('Required fields are missing');
+            throw new Error(errorsEnum.REQUIRED_FIELDS);
         }
         this.title = title;
         this.description = description;

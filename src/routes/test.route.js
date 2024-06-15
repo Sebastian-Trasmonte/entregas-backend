@@ -10,6 +10,7 @@ import {
 import ProductController from "../controllers/productController.js";
 import Product from "../models/Product.js";
 import userModel from "../dao/models/userModel.js";
+import { errorsEnum } from "../helpers/errorsEnum.js";
 
 const router = Router();
 const productController = new ProductController();
@@ -109,7 +110,6 @@ const AddUserFailNameRequired = async () => {
 
 const AddUserOk = async () => {
     var user = generateUser();
-    console.log('user', user)
     const newUser = {
         first_name: user.first_name,
         last_name: user.last_name,
@@ -132,7 +132,7 @@ const AddProductFail = async () => {
         return false;
     } catch (error) {
         {
-            if (error.message == "Required fields are missing") {
+            if (error.message == errorsEnum.REQUIRED_FIELDS) {
                 return true;
             }
         }
@@ -149,25 +149,25 @@ const AddProductOk = async () => {
 const GetProductIdInvalid = async () => {
     var productId = "123";
     var result = await productController.getProductsById(productId);
-    return result == 'Id product is an invalid mongoose id' ? true : false;
+    return result == errorsEnum.INVALID_MONGOOSE_ID ? true : false;
 }
 
 const GetProductNotExists = async () => {
     var productId = "66754785030970d385a44321";
     var result = await productController.getProductsById(productId);
-    return result == 'Not found' ? true : false;
+    return result == errorsEnum.NOT_FOUND ? true : false;
 }
 
 const AddProductIsNotAProduct = async () => {
     var product = generateProduct();
     var result = await productController.addProduct(product);
-    return result == 'The product is invalid' ? true : false;
+    return result == errorsEnum.INVALID_PRODUCT ? true : false;
 }
 
 const DeleteProductNotExists = async () => {
     var productId = "66754785030970d385a44321";
     var result = await productController.removeProductById(productId);
-    return result == 'Product id 66754785030970d385a44321 not exists' ? true : false;
+    return result == errorsEnum.NOT_FOUND ? true : false;
 }
 
 // #endregion ProductTests
