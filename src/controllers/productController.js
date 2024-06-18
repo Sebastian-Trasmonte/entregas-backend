@@ -1,4 +1,4 @@
-import ProductService from '../services/productService.js';
+import ProductService from '../repository/productService.js';
 import {socketServer} from '../app.js';
 
 export default class ProductController {

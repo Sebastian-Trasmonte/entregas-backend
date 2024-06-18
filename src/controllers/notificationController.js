@@ -1,4 +1,4 @@
-import NotificationService from '../services/notificationService.js';
+import NotificationService from '../repository/notificationService.js';
 import config from '../config/config.js';
 
 export default class NotificationController {

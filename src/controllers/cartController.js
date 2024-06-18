@@ -1,4 +1,4 @@
-import CartService from '../services/cartService.js';
+import CartService from '../repository/cartService.js';
 import NotificationController from './notificationController.js';
 import config from '../config/config.js';
 
