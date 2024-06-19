@@ -2,6 +2,7 @@ import { errorsEnum } from '../helpers/errorsEnum.js';
 import cartModel from './models/cartModel.js'
 import productModel from './models/productModel.js'
 import mongoose from 'mongoose';
+import { logger } from '../helpers/logger.js';
 
 export default class CartManagerDB {
     addCart = async () => {
@@ -9,7 +10,7 @@ export default class CartManagerDB {
             const result = await cartModel.create({});
             return result;
         } catch (error) {
-            console.error(error.message);
+            logger.error(error.message);
             throw new Error("Error in create cart");
         }
     }
@@ -25,7 +26,7 @@ export default class CartManagerDB {
                 _id: idCart
             });
         } catch (error) {
-            console.error(error.message);
+            logger.error(error.message);
             throw new Error("Error in find cart")
         }
         if (!cart) {
@@ -38,7 +39,7 @@ export default class CartManagerDB {
                 _id: idProduct
             });
         } catch (error) {
-            console.error(error.message);
+            logger.error(error.message);
             throw new Error("Error in find product")
         }
 
@@ -68,7 +69,7 @@ export default class CartManagerDB {
             const cart = await cartModel.findById(id).populate('productsCart.product');
             return cart ?? errorsEnum.NOT_FOUND;
         } catch (error) {
-            console.error(error.message);
+            logger.error(error.message);
             throw new Error(`Error in find cart by id ${id}`)
         }
     }
@@ -174,7 +175,7 @@ export default class CartManagerDB {
       
         for (let product of cart.productsCart) {
             if (product.product.stock < product.quantity) {
-                console.log('The product ' + product.product.title + ' does not have enough stock')
+                logger.warning('The product ' + product.product.title + ' does not have enough stock')
                 productsWithoutStock.push(product);
             }
             else{

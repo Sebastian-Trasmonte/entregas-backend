@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import config from '../config/config.js';
 import twilio from 'twilio';
+import { logger } from '../helpers/logger.js';
 
 export default class NotificationManager {
 
@@ -27,9 +28,9 @@ export default class NotificationManager {
         };
         try {
             const result = await this.transporter.sendMail(mailOptions);
-            console.log('Email sent: ' + result.response);
+            logger.info('Email sent: ' + result.response);
         } catch (error) {
-            console.error('Error sending email: ' + error);
+            logger.error('Error sending email: ' + error);
         }
     }
 
@@ -43,9 +44,9 @@ export default class NotificationManager {
                 to: info.recipient,
                 from: config.twilio_phone_number
             });
-            console.log('SMS sent');
+            logger.info('SMS sent');
         } catch (error) {
-            console.error('Error sending SMS: ' + error);
+            logger.error('Error sending SMS: ' + error);
         }
     }
 

@@ -6,6 +6,7 @@ import {
   user
 } from '../middlewares/auth.js';
 import CartController from "../controllers/cartController.js";
+import { logger } from "../helpers/logger.js";
 
 const router = Router();
 const cartController = new CartController();
@@ -15,7 +16,7 @@ router.get('/:id', admin, async (req, res) => {
     const cartId = req.params.id;
     res.send(await cartController.getCartById(cartId));
   } catch (error) {
-    console.log("error", error)
+    logger.error(`error ${error}`)
     return res.status(500).send({
       error: error.message
     });
@@ -26,7 +27,7 @@ router.post('/', admin, async (req, res) => {
   try {
     res.send(await cartController.addCart());
   } catch (error) {
-    console.log("error", error)
+    logger.error(`error ${error}`)
     return res.status(500).send({
       error: error.message
     });
@@ -39,7 +40,7 @@ router.post('/:id/product/:productId', user, async (req, res) => {
     const productId = req.params.productId;
     res.send(await cartController.addProductToCart(cartId, productId));
   } catch (error) {
-    console.log("error", error)
+    logger.error(`error ${error}`)
     return res.status(500).send({
       error: error.message
     });
@@ -105,7 +106,7 @@ router.post('/:id/purchase', user, async (req, res) => {
     const cartId = req.params.id;
     res.send(await cartController.purchaseCart(cartId));
   } catch (error) {
-    console.log("error", error)
+    logger.error(`error ${error}`)
     return res.status(500).send({
       error: error.message
     });

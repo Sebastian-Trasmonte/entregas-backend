@@ -24,6 +24,7 @@ import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import inicializatePassport from './config/passportConfig.js';
 import config from './config/config.js';
+import { addLogger,logger } from './helpers/logger.js';
 
 
 const __filename = fileURLToPath(
@@ -62,6 +63,7 @@ app.use(session({
 inicializatePassport();
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(addLogger);
 
 app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);
@@ -76,7 +78,8 @@ app.set("view engine", "handlebars");
 
 const PORT = config.port;
 const htppServer = app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    logger.info("Server is running on port " + PORT)
+
 });
 
 export const socketServer = new Server(htppServer);

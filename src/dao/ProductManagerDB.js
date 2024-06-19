@@ -2,6 +2,7 @@ import { errorsEnum } from '../helpers/errorsEnum.js';
 import Product from '../models/Product.js';
 import productModel from './models/productModel.js'
 import mongoose from 'mongoose';
+import { logger } from '../helpers/logger.js';
 
 export default class ProductManagerDB {
     addProduct = async (product) => {
@@ -36,7 +37,8 @@ export default class ProductManagerDB {
             if (error.code === 11000 || error.code === 11001) {
                 return "The product code exists"
             }
-            console.error(error.message);            
+
+            logger.error(error.message);            
             throw new Error("Error in create product");
         }
     }
@@ -47,7 +49,7 @@ export default class ProductManagerDB {
     
           return products;
         } catch (error) {
-            console.error(error.message);
+            logger.error(error.message);
             throw new Error("Error in find products")
         }
     }
@@ -66,7 +68,7 @@ export default class ProductManagerDB {
     
             return products;
         } catch (error) {
-            console.error(error.message);
+            logger.error(error.message);
             throw new Error("Error in find products")
         }
     }
@@ -80,7 +82,7 @@ export default class ProductManagerDB {
             }).lean();
             return product ?? "Not found";
         } catch (error) {
-            console.error(error.message);
+            logger.error(error.message);
             throw new Error(`Error in find product by id ${id}`)
         }
     }
@@ -99,7 +101,7 @@ export default class ProductManagerDB {
 
             return result;
         } catch (error) {
-            console.error(error.message);
+            logger.error(error.message);
             throw new Error(`Error in remove product, id ${id}`)
         }
     }
@@ -113,7 +115,7 @@ export default class ProductManagerDB {
             }, updatedFields);
             return result;
         } catch (error) {
-            console.error(error.message);
+            logger.error(error.message);
             throw new Error(`Error in update product, id ${idProduct}`)
         }
     }
@@ -128,14 +130,14 @@ export default class ProductManagerDB {
                 { new: true }, // Para que devuelva el documento actualizado
               )
               .then(documentoActualizado => {
-                console.log('The image was added successfully');
+                logger.info('The image was added successfully');
                 return documentoActualizado;
               })
               .catch(err => {
-                console.error('Error in insert image:', err);
+                logger.error('Error in insert image:', err);
               });
         } catch (error) {
-            console.error(error.message);
+            logger.error(error.message);
             throw new Error(`Error in add image to product, id ${idProduct}`)
         }
     }

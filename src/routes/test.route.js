@@ -11,6 +11,7 @@ import ProductController from "../controllers/productController.js";
 import Product from "../models/Product.js";
 import userModel from "../dao/models/userModel.js";
 import { errorsEnum } from "../helpers/errorsEnum.js";
+import { logger } from "../helpers/logger.js";
 
 const router = Router();
 const productController = new ProductController();
@@ -39,6 +40,16 @@ router.get('/', async (req, res) => {
     resulttest = resulttest.concat(await UserTest());
     res.send(resulttest);
 });
+
+router.get('/loggerTest', async (req, res) => {
+    logger.fatal("Fatal test");
+    logger.error("Error test");
+    logger.warning("Warning test");
+    logger.info("Info test");
+    logger.http("Http test");
+    logger.debug("Debug test");
+    res.send("Check logs");
+})
 
 const ProductTest = async () => {
     var resulttest = [];

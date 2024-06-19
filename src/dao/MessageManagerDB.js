@@ -1,4 +1,5 @@
 import messageModel from './models/messageModel.js'
+import { logger } from '../helpers/logger.js';
 
 export default class MessageManagerDB {
     addMessage = async (user, message) => {
@@ -9,7 +10,7 @@ export default class MessageManagerDB {
             });
             return result;
         } catch (error) {
-            console.error(error.message);
+            logger.error(error.message);
             throw new Error("Error in add message");
         }
     }
@@ -17,7 +18,7 @@ export default class MessageManagerDB {
         try {
             return await messageModel.find().lean();
         } catch (error) {
-            console.error(error.message);
+            logger.error(error.message);
             throw new Error(`Error obtaining messages`)
         }
     }
