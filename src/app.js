@@ -25,7 +25,19 @@ import passport from 'passport';
 import inicializatePassport from './config/passportConfig.js';
 import config from './config/config.js';
 import { addLogger,logger } from './helpers/logger.js';
+import { cpus } from 'os';
+import cluster from 'cluster';
 
+if (cluster.isPrimary) {
+    for (let i = 0; i < cpus().length; i++) {
+        clusterter.fork();
+    }
+
+    cluster.on('disconnect', worker => {
+        console.log(`PID instance ${worker.process.pid} down, creating a new one...`);
+        cluster.fork();
+    });
+} 
 
 const __filename = fileURLToPath(
     import.meta.url);
