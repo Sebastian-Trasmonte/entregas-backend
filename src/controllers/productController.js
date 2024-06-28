@@ -1,5 +1,5 @@
 import ProductService from '../repository/productService.js';
-import {socketServer} from '../app.js';
+import socketServer from '../app.js';
 
 export default class ProductController {
 
