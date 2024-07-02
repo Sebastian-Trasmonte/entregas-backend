@@ -39,9 +39,20 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    owner : {
+        type: String,
+        required: true
+    }
 })
 
 productSchema.plugin(moongosePaginate);
+productSchema.pre("save", function (next) {
+    this.owner = this.owner || "admin";
+    next();
+});
+
 const productModel = mongoose.model(productCollection, productSchema);
+
+
 
 export default productModel;

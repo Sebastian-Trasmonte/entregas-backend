@@ -1,13 +1,12 @@
 import {
     Router
 } from "express";
-import userModel from "../dao/models/userModel.js";
-import {
-    createHash
-} from "../helpers/utils.js";
 import passport from "passport";
+import UserController from "../controllers/userController.js";
+
 
 const router = Router();
+const userController = new UserController();
 
 router.post("/register",
     passport.authenticate("register", {
@@ -37,7 +36,7 @@ router.post("/login",
     }),
     async (req, res) => {
         try {
-    
+
             if (!req.user) {
                 req.session.failLogin = true;
                 res.redirect("/login");
@@ -76,22 +75,6 @@ router.post("/logout", async (req, res) => {
     res.redirect("/login");
 });
 
-router.post("/forgotPassword", async (req, res) => {
-    const {
-        email,
-        password
-    } = req.body;
-
-    let hashedPassword = createHash(password);
-    await userModel.findOneAndUpdate({
-        email: email
-    }, {
-        password: hashedPassword
-    });
-
-    res.redirect("/login");
-});
-
 router.get("/login/github",
     passport.authenticate("github", {
         scope: ["user:email"]
@@ -116,5 +99,65 @@ router.get("/githubcallback",
 router.get("/current", async (req, res) => {
     res.send(req.session.user);
 })
- 
+
+
+router.post("/forgotpassword", async (req, res) => {
+    res.render(
+        "forgotPassword", {
+            title: "Forgot password",
+            style: "index.css",
+        }
+    )
+});
+
+router.post("/getLinkForgetPassword", async (req, res) => {
+    try {
+        const {
+            email
+        } = req.body;
+        await userController.getLinkForgetPassword(email);
+        res.redirect("/login");
+    } catch (e) {
+        res.status(400).send({
+            message: e.message,
+            status: "error"
+        });
+    }
+});
+
+router.get("/resetpasswordcallback/:jwt", async (req, res) => {
+    try {
+        const jwt = req.params.jwt;
+        let email = await userController.ValidateJWTPassword(jwt);
+        res.render(
+            "resetPassword", {
+                title: "Reset password",
+                email: email,
+                style: "index.css",
+            }
+        )
+    } catch (e) {
+        res.status(400).send({
+            message: e.message,
+            status: "error"
+        });
+    }
+});
+
+router.post("/resetpassword", async (req, res) => {
+    const {
+        email,
+        password
+    } = req.body;
+    try {
+        await userController.resetPassword(email, password);
+        res.redirect("/login");
+    } catch (e) {
+        res.status(400).send({
+            message: e.message,
+            status: "error"
+        });
+    }
+});
+
 export default router;

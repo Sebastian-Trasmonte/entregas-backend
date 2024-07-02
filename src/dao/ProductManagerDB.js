@@ -5,8 +5,7 @@ import mongoose from 'mongoose';
 import { logger } from '../helpers/logger.js';
 
 export default class ProductManagerDB {
-    addProduct = async (product) => {
-       
+    addProduct = async (product, userId) => {
         const {
             title,
             description,
@@ -16,7 +15,8 @@ export default class ProductManagerDB {
             thumnails,
             category
         } = product;
-
+        product.owner = userId;
+        
         if (!(product instanceof Product)) {
             return ("The product is invalid");
         }

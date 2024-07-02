@@ -134,4 +134,13 @@ router.get('/cart/:id',auth , async (req, res) => {
     res.render('cart', { cartsProducts: products, total: total });
 });
 
+router.get('/resetPassword', async (req, res) => {
+    res.render(
+        "forgotPassword",
+        {
+            style: "index.css",
+        }
+    )
+});
+
 export default router;

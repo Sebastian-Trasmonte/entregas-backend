@@ -1,8 +1,7 @@
 import {Router} from "express";
 import Product from "../models/Product.js";
 import {uploader} from '../helpers/utils.js';
-
-import {admin,auth} from '../middlewares/auth.js';
+import {admin,auth,premiumOrAdmin} from '../middlewares/auth.js';
 import ProductController from "../controllers/productController.js";
 
 const router = Router();
@@ -28,7 +27,7 @@ router.get('/:id',admin, async (req, res) => {
     res.send(await productController.getProductsById(productId));
 });
 
-router.post('/',admin, async (req, res) => {
+router.post('/',premiumOrAdmin, async (req, res) => {
     const {title, description, price, thumbnail, code, stock, status,category}= req.body;
     const product = new Product(title, description, price, thumbnail, code, stock, status,category)
     res.send(await productController.addProduct(product));

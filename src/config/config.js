@@ -24,5 +24,6 @@ export default {
     twilio_phone_number: process.env.TWILIO_PHONE_NUMBER,
     notification:process.env.NOTIFICATIONS,
     recipient:process.env.RECIPIENT,
-    env_loggin:process.env.ENV_LOGGIN
+    env_loggin:process.env.ENV_LOGGIN,
+    jwt_secret:process.env.JWT_SECRET
 }

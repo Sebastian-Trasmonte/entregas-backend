@@ -19,7 +19,7 @@ export default class NotificationManager {
     sendEmail = async (info) => {
         const mailOptions = {
             from: {
-                name: 'Notification of your purchase',
+                name: info.title,
                 address: 'notifications@purchase.com'
             },
             to: info.recipient,

@@ -16,4 +16,8 @@ export default class NotificationController {
                 throw new Error("Invalid type");
         }
     }
+
+    async sendEmail(info) {     
+        return this.notificationService.sendEmail(info);
+    }
 }

@@ -43,7 +43,8 @@ export default class CartController {
         let info = {
             recipient: config.recipient,
             subject: 'Purchase made',
-            text: 'The purchase was made successfully. The following products were purchased: ' + productsName            
+            text: 'The purchase was made successfully. The following products were purchased: ' + productsName ,
+            title: 'Purchase notification'          
         };
         this.notificationController.sendNotification(info);
         return '';

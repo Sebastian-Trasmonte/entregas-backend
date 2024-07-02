@@ -4,7 +4,7 @@ import GitHubStrategy from "passport-github2";
 import config from "./config.js";
 import userModel from  "../dao/models/userModel.js";
 import {
-    isValidPassword
+    isSamePassword
 } from "../helpers/utils.js";
 
 
@@ -67,7 +67,7 @@ const inicializatePassport = () => {
                     });
                 }
              
-                if (!isValidPassword(user,password)) {
+                if (!isSamePassword(user,password)) {
                     return done(null, false, {
                         message: "Invalid password"
                     });
