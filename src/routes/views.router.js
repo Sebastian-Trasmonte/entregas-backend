@@ -1,6 +1,6 @@
 import { Router } from "express";
 import MessageManagerDB from "../dao/MessageManagerDB.js";
-import {auth,admin,user }from "../middlewares/auth.js";
+import {auth,user, premiumOrAdmin }from "../middlewares/auth.js";
 import ProductController from "../controllers/productController.js";
 import CartController from "../controllers/cartController.js";
 
@@ -9,7 +9,7 @@ const productController = new ProductController();
 const messageManagerDB = new MessageManagerDB();
 const cartController = new CartController();
 
-router.get("/", admin , async (req, res) => {
+router.get("/", premiumOrAdmin , async (req, res) => {
     const products = await productController.getAllProducts();
     res.render(
         "home",
@@ -18,7 +18,8 @@ router.get("/", admin , async (req, res) => {
             products: products,
             style: "index.css",
             name: req.session.user.first_name,
-            role: req.session.user.role
+            role: req.session.user.role,
+            email: req.session.user.email
         }
     )
 });

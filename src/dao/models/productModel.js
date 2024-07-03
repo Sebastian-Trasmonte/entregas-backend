@@ -41,15 +41,16 @@ const productSchema = new mongoose.Schema({
     },
     owner : {
         type: String,
-        required: true
+        
     }
 })
 
-productSchema.plugin(moongosePaginate);
 productSchema.pre("save", function (next) {
     this.owner = this.owner || "admin";
     next();
 });
+
+productSchema.plugin(moongosePaginate);
 
 const productModel = mongoose.model(productCollection, productSchema);
 

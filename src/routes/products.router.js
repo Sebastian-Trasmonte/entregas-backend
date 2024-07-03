@@ -28,9 +28,10 @@ router.get('/:id',admin, async (req, res) => {
 });
 
 router.post('/',premiumOrAdmin, async (req, res) => {
+    const {email,role}= req.session.user;
     const {title, description, price, thumbnail, code, stock, status,category}= req.body;
     const product = new Product(title, description, price, thumbnail, code, stock, status,category)
-    res.send(await productController.addProduct(product));
+    res.send(await productController.addProduct(product,role,email));
 });
 
 router.post('/imgToProduct',admin,uploader.single('file') , async (req, res) => {
@@ -48,10 +49,17 @@ router.put('/:id',admin, async (req, res) => {
     }
 });
 
-router.delete('/:id',admin, async (req, res) => {
-    const productId = req.params.id;
-    const result = await productController.removeProductById(productId);
-    res.send(result);
+router.delete('/:id',premiumOrAdmin, async (req, res) => {
+    try{
+        const productId = req.params.id;
+        const {email,role}= req.session.user;
+        const result = await productController.removeProductById(productId,role,email);
+        res.send(result);
+    }
+    catch(error){
+        return res.status(500).send({error: error.message});
+    }
+ 
 });
 
 export default router;

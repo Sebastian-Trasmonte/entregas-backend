@@ -13,7 +13,7 @@ import {
     Server
 } from "socket.io";
 import Product from './models/Product.js';
-import ProductManagerDB from './dao/ProductManagerDB.js';
+import ProductController from './controllers/productController.js';
 import MessageManagerDB from './dao/MessageManagerDB.js';
 import mongoose from 'mongoose';
 import sessionRouter from './routes/user.router.js';
@@ -35,108 +35,118 @@ import cluster from 'cluster';
 
 let socketServer = null;
 
-if (cluster.isPrimary) {
-    for (let i = 0; i < cpus().length; i++) {
-        cluster.fork();
-        logger.info(`Creating a new instance of the server... ID: ${process.pid	}`);
-    }
+// if (cluster.isPrimary) {
+//     for (let i = 0; i < cpus().length; i++) {
+//         cluster.fork();
 
-    cluster.on('disconnect', worker => {
-        logger.info(`PID instance ${worker.process.pid} down, creating a new one...`);
-        cluster.fork();
-    });
-} else {
-    const __filename = fileURLToPath(
-        import.meta.url);
-    const __dirname = dirname(__filename);
-    const productManager = new ProductManagerDB();
-    const messageManager = new MessageManagerDB();
+//     }
 
-    const app = express();
+//     cluster.on('disconnect', worker => {
+//         logger.info(`PID instance ${worker.process.pid} down, creating a new one...`);
+//         cluster.fork();
+//     });
+// } else {
+logger.info(`Creating a new instance of the server... ID: ${process.pid	}`);
+const __filename = fileURLToPath(
+    import.meta.url);
+const __dirname = dirname(__filename);
+const productController = new ProductController();
+const messageManager = new MessageManagerDB();
 
-    const conectionString = config.mongo_url;
+const app = express();
 
-    mongoose.connect(conectionString);
+const conectionString = config.mongo_url;
 
-    app.use(express.json());
-    app.use(express.urlencoded({
-        extended: true
-    }));
+mongoose.connect(conectionString);
 
-    app.use(express.static("public"));
+app.use(express.json());
+app.use(express.urlencoded({
+    extended: true
+}));
 
-    app.use(cookieParser("random"));
+app.use(express.static("public"));
 
-    app.use(session({
-        store: mongoStore.create({
-            mongoUrl: conectionString,
-            mongoOptions: {
-                useUnifiedTopology: true
-            },
-            ttl: 600
-        }),
-        secret: "secreto",
-        resave: false, // prevents unnecessary session saves if the session wasn't modified.
-        saveUninitialized: false // avoids saving empty sessions.
-    }));
-    inicializatePassport();
-    app.use(passport.initialize());
-    app.use(passport.session());
-    app.use(addLogger);
+app.use(cookieParser("random"));
 
-    app.use("/api/products", productRouter);
-    app.use("/api/cart", cartRouter);
-    app.use("/", viewsRouter);
-    app.use("/api/session", sessionRouter);
+app.use(session({
+    store: mongoStore.create({
+        mongoUrl: conectionString,
+        mongoOptions: {
+            useUnifiedTopology: true
+        },
+        ttl: 600
+    }),
+    secret: "secreto",
+    resave: false, // prevents unnecessary session saves if the session wasn't modified.
+    saveUninitialized: false // avoids saving empty sessions.
+}));
+inicializatePassport();
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(addLogger);
 
-    app.use("/mockingproducts", testRouter);
+app.use("/api/products", productRouter);
+app.use("/api/cart", cartRouter);
+app.use("/", viewsRouter);
+app.use("/api/session", sessionRouter);
 
-    app.engine("handlebars", handlebars.engine());
-    app.set("views", `${__dirname}/views`);
-    app.set("view engine", "handlebars");
+app.use("/mockingproducts", testRouter);
 
-    const PORT = config.port;
-    const htppServer = app.listen(PORT, () => {
-        logger.info("Server is running on port " + PORT)
-    });
-    socketServer = new Server(htppServer);
-    const messages = await messageManager.getAllMessages();
-    socketServer.emit("messagesLogs", messages);
-    socketServer.on("connection", (socket) => {
-        socket.on("delete-product", async (idproduct) => {
-            await productManager.removeProductById(idproduct);
+app.engine("handlebars", handlebars.engine());
+app.set("views", `${__dirname}/views`);
+app.set("view engine", "handlebars");
+
+const PORT = config.port;
+const htppServer = app.listen(PORT, () => {
+    logger.info("Server is running on port " + PORT)
+});
+socketServer = new Server(htppServer);
+const messages = await messageManager.getAllMessages();
+socketServer.emit("messagesLogs", messages);
+socketServer.on("connection", (socket) => {
+    socket.on("delete-product", async (idproduct, userRole, userEmail) => {
+        try{
+            await productController.removeProductById(idproduct, userRole, userEmail);
             socketServer.emit("product-deleted", idproduct);
-        })
+        }
+        catch(e)
+        {
+            socket.emit("error-occurred", e.message);
+        }
+     
+    })
 
-        socket.on("add-product", async (data) => {
-            const {
-                title,
-                price,
-                description,
-                code,
-                stock,
-                category
-            } = data;
-            const product = new Product(title, description, price, null, code, stock, true, category)
-            const result = await productManager.addProduct(product);
-            if (result._id != undefined) {
-                product._id = result.id;
-                socketServer.emit("product-added", product);
-            }
+    socket.on("add-product", async (data) => {
+        const {
+            title,
+            price,
+            description,
+            code,
+            stock,
+            category,
+            userRole,
+            userEmail
+        } = data;
+        const product = new Product(title, description, price, null, code, stock, true, category)
+        const result = await productController.addProduct(product, userRole, userEmail);
+        if (result._id != undefined) {
+            product._id = result.id;
+            socketServer.emit("product-added", product);
+        }
 
-        })
+    })
 
-        socket.on("message", async data => {
-            await messageManager.addMessage(data.user, data.message);
-            const messages = await messageManager.getAllMessages();
-            socketServer.emit("messagesLogs", messages);
-        });
-
-        socket.on("userConnect", data => {
-            socket.emit("messagesLogs", messages);
-            socket.broadcast.emit("newUser", data);
-        });
+    socket.on("message", async data => {
+        await messageManager.addMessage(data.user, data.message);
+        const messages = await messageManager.getAllMessages();
+        socketServer.emit("messagesLogs", messages);
     });
-}
+
+    socket.on("userConnect", data => {
+        socket.emit("messagesLogs", messages);
+        socket.broadcast.emit("newUser", data);
+    });
+});
+// }
 
 export default socketServer;

@@ -51,7 +51,7 @@ router.post("/login",
             }
             req.session.failLogin = false;
 
-            if (req.user.role === "admin") {
+            if (req.user.role === "admin" || req.user.role === "premium") {
                 res.redirect("/");
                 return;
             }

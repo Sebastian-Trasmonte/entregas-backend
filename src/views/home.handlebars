@@ -4,6 +4,8 @@
      <button class="logout" onclick="logout()">Cerrar sesión</button>
     <h1 class="titleForm">Crear un nuevo producto</h1>
     <div class="productForm">
+        <input type="hidden" name="userRole" id="userRole" value="{{role}}">
+        <input type="hidden" name="userEmail" id="userEmail" value="{{email}}">
         <label for="productTitle">Título del producto:</label><br>
         <input type="text" id="productTitle" name="productTitle"><br>
         <label for="productDescription">Descripción del producto:</label><br>

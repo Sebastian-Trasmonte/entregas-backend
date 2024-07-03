@@ -1,6 +1,6 @@
 import {errorsEnum} from '../helpers/errorsEnum.js';
 class Product {
-    constructor(title, description, price,thumbnail,code,stock,status,category) {
+    constructor(title, description, price,thumbnail,code,stock,status,category,owner) {
        
         if (title === undefined || title === null ||
             description === undefined || description === null ||

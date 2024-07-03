@@ -11,25 +11,32 @@ export default class ProductController {
         return this.productService.getAllProducts();
     }
 
-    async getAllProductsWithFilters(limit,page,sort,query) {
+    async getAllProductsWithFilters(limit, page, sort, query) {
         let sortOrder;
         if (sort === 'asc') {
-            sortOrder = { price: 1 }; // Orden ascendente por precio
+            sortOrder = {
+                price: 1
+            }; // Orden ascendente por precio
         } else if (sort === 'desc') {
-            sortOrder = { price: -1 }; // Orden descendente por precio
+            sortOrder = {
+                price: -1
+            }; // Orden descendente por precio
         }
 
-        return this.productService.getAllProductsWithFilters(limit,page,sortOrder,query);
+        return this.productService.getAllProductsWithFilters(limit, page, sortOrder, query);
     }
 
     async getProductsById(productId) {
         return this.productService.getProductsById(productId);
     }
 
-    async addProduct(product) {
+    async addProduct(product, userRole, userEmail) {
+        if (userRole == "premium") {
+            product.owner = userEmail;
+        }
         const result = this.productService.addProduct(product);
 
-        if (result._id != undefined){
+        if (result._id != undefined) {
             product._id = result._id.toString();
             socketServer.emit("product-added", product);
         }
@@ -41,10 +48,17 @@ export default class ProductController {
     }
 
     async updateProduct(productId, updatedFields) {
-        return this.productService.updateProduct(productId,updatedFields);
+        return this.productService.updateProduct(productId, updatedFields);
     }
 
-    async removeProductById(productId) {
+    async removeProductById(productId, userRole, userEmail) {
+        if (userRole == "premium") {
+            const product = await this.productService.getProductsById(productId);
+            if (product.owner != userEmail) {
+                throw new Error("You can't delete this product, you are not the owner");
+            }
+        }
+
         const result = this.productService.removeProductById(productId);
         socketServer.emit("product-deleted", productId);
         return result

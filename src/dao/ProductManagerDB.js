@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import { logger } from '../helpers/logger.js';
 
 export default class ProductManagerDB {
-    addProduct = async (product, userId) => {
+    addProduct = async (product) => {
         const {
             title,
             description,
@@ -13,9 +13,9 @@ export default class ProductManagerDB {
             price,
             stock,
             thumnails,
-            category
+            category,     
+            owner       
         } = product;
-        product.owner = userId;
         
         if (!(product instanceof Product)) {
             return ("The product is invalid");
@@ -29,7 +29,8 @@ export default class ProductManagerDB {
                 price,
                 stock,
                 category,
-                thumnails: thumnails ?? []
+                thumnails: thumnails ?? [],
+                owner: owner
             });
             return result;
         } catch (error) {
@@ -91,6 +92,7 @@ export default class ProductManagerDB {
             return errorsEnum.INVALID_MONGOOSE_ID;
         }
         try {
+            
             const result = await productModel.deleteOne({
                 _id: id
             });

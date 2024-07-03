@@ -1,13 +1,20 @@
 const socket = io();
 
 function deleteProduct(id) {
-    socket.emit("delete-product", id)
+    const userRole = document.getElementById('userRole').value;
+    const userEmail = document.getElementById('userEmail').value;
+    socket.emit("delete-product", id,userRole,userEmail)
 }
 
 socket.on("product-deleted", (id) => {
     const product = document.getElementById(`productId${id}`);
     product.remove();
 })
+
+socket.on("error-occurred", (message) => {
+    alert(message);
+}
+)
 
 function addProduct() {
     const title = document.getElementById('productTitle').value;
@@ -16,6 +23,8 @@ function addProduct() {
     const code = document.getElementById('productCode').value;
     const stock = document.getElementById('productStock').value;
     const category = document.getElementById('productCategory').value;
+    const userRole = document.getElementById('userRole').value;
+    const userEmail = document.getElementById('userEmail').value;
 
     if (title && price && description && code && stock && category) {
         socket.emit("add-product", {
@@ -24,7 +33,9 @@ function addProduct() {
             description,
             code,
             stock,
-            category
+            category,
+            userRole,
+            userEmail
         });
     }else
         alert("All fields are required");
