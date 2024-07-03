@@ -65,4 +65,7 @@ export default class UserController {
    async getUser(email) {
     return await this.userService.getUser(email);
    }
+   async changeUserRol(id){
+    return await this.userService.changeUserRol(id);
+   }
 }

@@ -17,7 +17,14 @@ export default class CartController {
         return await this.cartService.addCart();
     }
 
-    async addProductToCart(cartId, productId) {
+    async addProductToCart(cartId, productId, role, email) {
+        if (role == "premium") {
+            const product = await this.productService.getProductsById(productId);
+            if (product.owner == email) {
+                throw new Error("You can't add this product to the cart, you are the owner");
+            }
+        }
+
         return await this.cartService.addProductToCart(cartId, productId);
     }
 
@@ -43,8 +50,8 @@ export default class CartController {
         let info = {
             recipient: config.recipient,
             subject: 'Purchase made',
-            text: 'The purchase was made successfully. The following products were purchased: ' + productsName ,
-            title: 'Purchase notification'          
+            text: 'The purchase was made successfully. The following products were purchased: ' + productsName,
+            title: 'Purchase notification'
         };
         this.notificationController.sendNotification(info);
         return '';

@@ -100,7 +100,6 @@ router.get("/current", async (req, res) => {
     res.send(req.session.user);
 })
 
-
 router.post("/forgotpassword", async (req, res) => {
     res.render(
         "forgotPassword", {
@@ -152,6 +151,25 @@ router.post("/resetpassword", async (req, res) => {
     try {
         await userController.resetPassword(email, password);
         res.redirect("/login");
+    } catch (e) {
+        res.status(400).send({
+            message: e.message,
+            status: "error"
+        });
+    }
+});
+
+router.get("/premium/:uid", async (req, res) => {
+    try {
+        const uid = req.params.uid;
+        
+        let roleUpdated=  await userController.changeUserRol(uid);
+        console.log(roleUpdated)
+        req.session.user.role = roleUpdated;
+        res.status(200).send({
+            message: "Rol actualizado de usuario",
+            status: "success"
+        });
     } catch (e) {
         res.status(400).send({
             message: e.message,

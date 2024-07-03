@@ -32,5 +32,8 @@ export default class UserService {
     async getUser(email) {
         return await this.userManager.getUser(email);
     }
+    async changeUserRol(id){
+        return await this.userManager.changeUserRol(id);
+    }
 
 };

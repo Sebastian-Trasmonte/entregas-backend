@@ -38,7 +38,8 @@ router.post('/:id/product/:productId', user, async (req, res) => {
   try {
     const cartId = req.params.id;
     const productId = req.params.productId;
-    res.send(await cartController.addProductToCart(cartId, productId));
+    const {email,role}= req.session.user;
+    res.send(await cartController.addProductToCart(cartId, productId,role,email));
   } catch (error) {
     logger.error(`error ${error}`)
     return res.status(500).send({
