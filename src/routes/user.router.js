@@ -161,8 +161,7 @@ router.post("/resetpassword", async (req, res) => {
 
 router.get("/premium/:uid", async (req, res) => {
     try {
-        const uid = req.params.uid;
-        
+        const uid = req.params.uid;        
         let roleUpdated=  await userController.changeUserRol(uid);
         console.log(roleUpdated)
         req.session.user.role = roleUpdated;

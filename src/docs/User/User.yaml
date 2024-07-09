@@ -1,0 +1,171 @@
+openapi: 3.0.0
+info:
+  title: Mi API
+  description: Manage API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Users
+    description: Operaciones relacionadas con los usuarios
+paths:
+  /api/session/register:
+    post:
+      tags:
+        - Users
+      summary: Registrar un nuevo usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  example: Juan
+                last_name:
+                  type: string
+                  example: Pérez
+                email:
+                  type: string
+                  example: juan.perez@example.com
+                age:
+                  type: integer
+                  example: 25
+                password:
+                  type: string
+                  example: pass1234
+  /api/session/login:
+    post:
+      tags:
+        - Users
+      summary: Iniciar sesión
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: juan.perez@example.com
+                password:
+                  type: string
+                  example: pass1234
+  /api/session/logout:
+    post:
+      tags:
+        - Users
+      summary: Cerrar sesión
+  /api/session/current:
+    get:
+      tags:
+        - Users
+      summary: Obtener usuario actual
+      responses:
+        '200':
+          description: Información del usuario actual
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  first_name:
+                    type: string
+                    example: Juan
+                  last_name:
+                    type: string
+                    example: Pérez
+                  email:
+                    type: string
+                    example: juan.perez@example.com
+                  age:
+                    type: integer
+                    example: 25
+                  role:
+                    type: string
+                    example: admin
+  /api/session/getLinkForgetPassword:
+    post:
+      tags:
+        - Users
+      summary: Envía mail con link para reiniciar contraseña
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: juan.perez@example.com
+  /api/session/resetpassword:
+    post:
+      tags:
+        - Users
+      summary: Reiniciar contraseña de usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: juan.perez@example.com
+                password:
+                  type: string
+                  example: newpass1234
+  /api/session/premium/{uid}:
+    put:
+      tags:
+        - Users
+      summary: Cambiar rol de usuario
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: ID de usuario en MongoDB
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  example: premium
+      responses:
+        '200':
+          description: Rol actualizado de usuario
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Rol actualizado de usuario
+                  status:
+                    type: string
+                    example: success
+        '400':
+          description: Error al cambiar el rol
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Descripción del error específico
+                  status:
+                    type: string
+                    example: error

@@ -1,0 +1,364 @@
+openapi: 3.0.0
+info:
+  title: Mi API
+  description: Manage API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Products
+    description: Operaciones relacionadas con los productos
+paths:
+  /api/products:
+    get:
+      tags:
+        - Products
+      summary: Obtener todos los productos
+      parameters:
+        - name: limit
+          in: query
+          description: Número máximo de resultados por página
+          required: false
+          schema:
+            type: integer
+            example: 10
+        - name: page
+          in: query
+          description: Número de página
+          required: false
+          schema:
+            type: integer
+            example: 1
+        - name: sort
+          in: query
+          description: Orden de resultados (ascendente o descendente)
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            example: desc
+        - name: query
+          in: query
+          description: Búsqueda por nombre o descripción del producto
+          required: false
+          schema:
+            type: string
+            example: ""
+      responses:
+        '200':
+          description: Lista de productos filtrada y paginada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          description: ID único del producto (formato Mongoose)
+                          example: "60e9ea657e6974a59cde9a47"
+                        id:
+                          type: integer
+                          description: ID del producto (formato conveniente)
+                          example: 1
+                        title:
+                          type: string
+                          description: Nombre del producto
+                          example: Product A
+                        description:
+                          type: string
+                          description: Descripción del producto
+                          example: Descripción del producto A
+                        price:
+                          type: number
+                          description: Precio del producto
+                          example: 29.99
+                        thumbnail:
+                          type: array
+                          description: Imágenes en miniatura del producto
+                          items:
+                            type: string
+                            example: ['thumbnail_url_1', 'thumbnail_url_2']
+                        code:
+                          type: string
+                          description: Código único del producto
+                          example: ABC123
+                        stock:
+                          type: number
+                          description: Cantidad en stock del producto
+                          example: 50
+                        status:
+                          type: boolean
+                          description: Estado del producto (activo/inactivo)
+                          example: true
+                        category:
+                          type: string
+                          description: Categoría del producto
+                          example: Electronics
+                        owner:
+                          type: string
+                          description: Propietario del producto
+                          example: "user123"
+                  totalCount:
+                    type: integer
+                    example: 20  # Ejemplo de total de productos encontrados
+    post:
+      tags:
+        - Products
+      summary: Crear un nuevo producto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Product A
+                description:
+                  type: string
+                  example: Descripción del producto A
+                price:
+                  type: number
+                  example: 29.99
+                thumbnail:
+                  type: array
+                  items:
+                    type: string
+                    example: ['thumbnail_url_1', 'thumbnail_url_2']
+                code:
+                  type: string
+                  example: ABC123
+                stock:
+                  type: number
+                  example: 50
+                status:
+                  type: boolean
+                  example: true
+                category:
+                  type: string
+                  example: Electronics
+      responses:
+        '200':
+          description: Producto creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    description: ID único del producto creado (formato Mongoose)
+                    example: "60e9ea657e6974a59cde9a47"
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error in create product
+  /api/products/{id}:
+    get:
+      tags:
+        - Products
+      summary: Obtener un producto por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del producto a obtener
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Producto encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    description: ID único del producto (formato Mongoose)
+                    example: "60e9ea657e6974a59cde9a47"
+                  id:
+                    type: integer
+                    description: ID del producto (formato conveniente)
+                    example: 1
+                  title:
+                    type: string
+                    description: Nombre del producto
+                    example: Product A
+                  description:
+                    type: string
+                    description: Descripción del producto
+                    example: Descripción del producto A
+                  price:
+                    type: number
+                    description: Precio del producto
+                    example: 29.99
+                  thumbnail:
+                    type: array
+                    description: Imágenes en miniatura del producto
+                    items:
+                      type: string
+                      example: ['thumbnail_url_1', 'thumbnail_url_2']
+                  code:
+                    type: string
+                    description: Código único del producto
+                    example: ABC123
+                  stock:
+                    type: number
+                    description: Cantidad en stock del producto
+                    example: 50
+                  status:
+                    type: boolean
+                    description: Estado del producto (activo/inactivo)
+                    example: true
+                  category:
+                    type: string
+                    description: Categoría del producto
+                    example: Electronics
+                  owner:
+                    type: string
+                    description: Propietario del producto
+                    example: "user123"
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized
+        '404':
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Producto no encontrado
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error al buscar el producto por ID ${id}
+    put:
+      tags:
+        - Products
+      summary: Actualizar un producto por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del producto a actualizar
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Nuevo nombre del producto
+                description:
+                  type: string
+                  example: Nueva descripción del producto
+                price:
+                  type: number
+                  example: 39.99
+                thumbnail:
+                  type: array
+                  items:
+                    type: string
+                    example: ['nueva_thumbnail_url']
+                code:
+                  type: string
+                  example: ABC456
+                stock:
+                  type: number
+                  example: 100
+                status:
+                  type: boolean
+                  example: true
+                category:
+                  type: string
+                  example: Furniture
+      responses:
+        '200':
+          description: Producto actualizado exitosamente
+        '404':
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Producto no encontrado
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error al actualizar el producto por ID ${id}
+  /api/products/imgToProduct:
+    post:
+      tags:
+        - Products
+      summary: Asociar imagen a un producto
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: ID del producto al que se asociará la imagen
+                  example: "60e9ea657e6974a59cde9a47"
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Imagen asociada exitosamente al producto
+        '500':
+          description: Error interno del servidor al asociar la imagen
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error in associate image to product

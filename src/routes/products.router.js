@@ -23,15 +23,28 @@ router.get('/', auth, async (req, res) => {
 });
 
 router.get('/:id',admin, async (req, res) => {
-    const productId = req.params.id;
-    res.send(await productController.getProductsById(productId));
+    try
+    {
+        const productId = req.params.id;
+        res.send(await productController.getProductsById(productId));
+    }
+    catch(e)
+    {
+        return res.status(500).send({error: e.message});
+    }
 });
 
 router.post('/',premiumOrAdmin, async (req, res) => {
-    const {email,role}= req.session.user;
-    const {title, description, price, thumbnail, code, stock, status,category}= req.body;
-    const product = new Product(title, description, price, thumbnail, code, stock, status,category)
-    res.send(await productController.addProduct(product,role,email));
+    try{
+        const {email,role}= req.session.user;
+        const {title, description, price, thumbnail, code, stock, status,category}= req.body;
+        const product = new Product(title, description, price, thumbnail, code, stock, status,category)
+        res.send(await productController.addProduct(product,role,email));
+    }
+    catch(error){
+        return res.status(500).send({error: error.message});
+    }
+
 });
 
 router.post('/imgToProduct',admin,uploader.single('file') , async (req, res) => {

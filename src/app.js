@@ -32,6 +32,9 @@ import {
     cpus
 } from 'os';
 import cluster from 'cluster';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUiExpress from 'swagger-ui-express';
+
 
 let socketServer = null;
 
@@ -96,24 +99,38 @@ app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
 
+const swaggerOptions = {
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "Manage API",
+            version: "1.0.0",
+            description: "A simple API to manage products, cart and users."
+        },
+    },
+    apis: ['./src/docs/**/*.yaml']
+};
+
+const specs = swaggerJSDoc(swaggerOptions);
+app.use("/api-docs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
+
 const PORT = config.port;
 const htppServer = app.listen(PORT, () => {
     logger.info("Server is running on port " + PORT)
 });
+
 socketServer = new Server(htppServer);
 const messages = await messageManager.getAllMessages();
 socketServer.emit("messagesLogs", messages);
 socketServer.on("connection", (socket) => {
     socket.on("delete-product", async (idproduct, userRole, userEmail) => {
-        try{
+        try {
             await productController.removeProductById(idproduct, userRole, userEmail);
             socketServer.emit("product-deleted", idproduct);
-        }
-        catch(e)
-        {
+        } catch (e) {
             socket.emit("error-occurred", e.message);
         }
-     
+
     })
 
     socket.on("add-product", async (data) => {
@@ -147,6 +164,8 @@ socketServer.on("connection", (socket) => {
         socket.broadcast.emit("newUser", data);
     });
 });
+
+
 // }
 
 export default socketServer;
