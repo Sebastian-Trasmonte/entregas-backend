@@ -1,0 +1,293 @@
+openapi: 3.0.0
+info:
+  title: Mi API
+  description: Manage API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Cart
+    description: Operaciones relacionadas con el carrito de compras
+  - name: Products
+    description: Operaciones relacionadas con los productos
+
+paths:
+  /api/cart/{id}:
+    get:
+      tags:
+        - Cart
+      summary: Obtener información del carrito por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del carrito a consultar
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Información del carrito recuperada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    description: ID único del carrito
+                    example: "6626eb75f97d48ae47c9f2d5"
+                  productsCart:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        product:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                              description: ID único del producto (formato Mongoose)
+                              example: "6684a93e18ae0d9a3ad4716d"
+                            title:
+                              type: string
+                              description: Nombre del producto
+                              example: Fantástico Madera Sopa
+                            description:
+                              type: string
+                              description: Descripción del producto
+                              example: Deficio clibanus vereor casso amitto pax consequuntur.
+                            price:
+                              type: number
+                              description: Precio del producto
+                              example: 763
+                            thumbnail:
+                              type: array
+                              description: Imágenes en miniatura del producto
+                              items:
+                                type: string
+                                example: []
+                            code:
+                              type: string
+                              description: Código único del producto
+                              example: grGyHzaNiA
+                            stock:
+                              type: number
+                              description: Cantidad en stock del producto
+                              example: 47
+                            status:
+                              type: boolean
+                              description: Estado del producto (activo/inactivo)
+                              example: true
+                            category:
+                              type: string
+                              description: Categoría del producto
+                              example: Bebes
+                            owner:
+                              type: string
+                              description: Propietario del producto
+                              example: german.alejandrozuslet@gmail.com
+                        quantity:
+                          type: number
+                          description: Cantidad del producto en el carrito
+                          example: 1
+                        _id:
+                          type: string
+                          description: ID único del elemento del carrito
+                          example: "668dcf07c801c5ff08f15c44"
+        '404':
+          description: Carrito no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Carrito no encontrado
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error al buscar el carrito por ID {id}
+
+  /api/cart:
+    post:
+      tags:
+        - Cart
+      summary: Crear un nuevo carrito
+      responses:
+        '200':
+          description: Creación exitosa del carrito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  acknowledged:
+                    type: boolean
+                    example: true
+                  modifiedCount:
+                    type: integer
+                    example: 1
+                  upsertedId:
+                    type: null
+                    example: null
+                  upsertedCount:
+                    type: integer
+                    example: 0
+                  matchedCount:
+                    type: integer
+                    example: 1
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error al crear el carrito
+
+  /api/cart/{id}/product/{productId}:
+    post:
+      tags:
+        - Cart
+      summary: Agregar un producto al carrito
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del carrito al cual agregar el producto
+          schema:
+            type: string
+        - name: productId
+          in: path
+          required: true
+          description: ID del producto a agregar al carrito
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Producto agregado exitosamente al carrito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  acknowledged:
+                    type: boolean
+                    example: true
+                  modifiedCount:
+                    type: integer
+                    example: 1
+                  upsertedId:
+                    type: null
+                    example: null
+                  upsertedCount:
+                    type: integer
+                    example: 0
+                  matchedCount:
+                    type: integer
+                    example: 1
+
+    delete:
+      tags:
+        - Cart
+      summary: Eliminar todos los productos del carrito
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del carrito del cual eliminar todos los productos
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Todos los productos fueron eliminados del carrito exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  acknowledged:
+                    type: boolean
+                    example: true
+                  modifiedCount:
+                    type: integer
+                    example: 1
+                  upsertedId:
+                    type: null
+                    example: null
+                  upsertedCount:
+                    type: integer
+                    example: 0
+                  matchedCount:
+                    type: integer
+                    example: 1
+
+  /api/cart/{id}/purchase:
+    post:
+      tags:
+        - Cart
+      summary: Procesar la compra y enviar por correo electrónico
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del carrito a procesar
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Correo electrónico enviado exitosamente con los detalles de la compra
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Correo electrónico enviado correctamente
+        '404':
+          description: Carrito no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Carrito no encontrado
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Error al procesar la compra del carrito {id}
+
+  /api/post:
+    post:
+      tags:
+        - Products
+      summary: Ejemplo de endpoint POST sin parámetros
+      responses:
+        '200':
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Respuesta exitosa sin parámetros
