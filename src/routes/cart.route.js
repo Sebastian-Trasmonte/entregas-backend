@@ -34,7 +34,7 @@ router.post('/', admin, async (req, res) => {
   }
 });
 
-router.post('/:id/product/:productId', user, async (req, res) => {
+router.post('/:id/product/:productId', async (req, res) => {
   try {
     const cartId = req.params.id;
     const productId = req.params.productId;
@@ -73,7 +73,7 @@ router.delete('/:id', admin, async (req, res) => {
   }
 });
 
-router.put('/:id/product/:productId', user, async (req, res) => {
+router.put('/:id/product/:productId', async (req, res) => {
   try {
     const {
       id,

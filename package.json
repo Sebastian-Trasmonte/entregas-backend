@@ -30,12 +30,14 @@
     "winston": "^3.13.0"
   },
   "scripts": {
-    "test": "0",
+    "test": "mocha test/*.test.js",
     "start": "nodemon src/app.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@faker-js/faker": "^8.4.1"
+    "@faker-js/faker": "^8.4.1",
+    "chai": "^5.1.1",
+    "mocha": "^10.6.0"
   }
 }

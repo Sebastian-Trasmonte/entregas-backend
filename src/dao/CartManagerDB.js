@@ -83,8 +83,7 @@ export default class CartManagerDB {
         if (!cart) {
             throw new Error('Cart does not exist');
         }
-        //eliminar el id del producto del carrito
-        cart.productsCart = cart.productsCart.filter(product => product._id.toString() !== idProduct);
+        cart.productsCart = cart.productsCart.filter(productCarts => productCarts.product.toString() != idProduct);
         const result = await cartModel.updateOne({
             _id: idCart
         }, cart);
@@ -119,11 +118,10 @@ export default class CartManagerDB {
         if (quantity <= 0) {
             throw new Error('Quantity must be greater than 0');
         }
-        //validar que el producto exista en el carrito
-        if (!cart.productsCart.find(product => product._id.toString() === idProduct)) {
+        if (!cart.productsCart.find(productsCart => productsCart.product.toString() == idProduct)) {
             throw new Error(errorsEnum.PRODUCT_NOT_EXISTS_IN_CART);
         }
-        cart.productsCart.find(product => product._id.toString() === idProduct).quantity = quantity;
+        cart.productsCart.find(productsCart => productsCart.product.toString() == idProduct).quantity = quantity;
         const result = await cartModel.updateOne({
             _id: idCart
         }, cart);

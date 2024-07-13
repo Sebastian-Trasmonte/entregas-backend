@@ -29,7 +29,7 @@ export default class CartService {
         return await this.cartManager.updateProductQuantity(id, productId, quantity);
     }
 
-    async updateProductQuantity(id, products) {
+    async updateProducts(id, products) {
         return await this.cartManager.updateProducts(id, products);
     }
 
