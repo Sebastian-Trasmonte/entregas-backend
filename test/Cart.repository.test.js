@@ -10,6 +10,10 @@ const service = new cartService();
 const expect = chai.expect;
 
 //correr npm test, ya está configurado en package.json
+//para que haga watch 
+//npx mocha --watch --parallel 
+//ejecutar solo este test
+//npx mocha .\test\Cart.repository.test.js
 describe("Cart Model", () => {
     let productId = "123123";
     let cartId = "";

@@ -8,9 +8,10 @@ mongoose.connect(conectionString);
 const assert = Assert.strict;
 const service = new userService();
 
+//correr npm test, ya está configurado en package.json
 //para que haga watch 
-//npx mocha --watch --parallel .\test\User.dao.test.js
-//ejecutar 1 vez
+//npx mocha --watch --parallel 
+//ejecutar solo este test
 //npx mocha .\test\User.repository.test.js
 describe("User Model", () => {
     before(() => {});
