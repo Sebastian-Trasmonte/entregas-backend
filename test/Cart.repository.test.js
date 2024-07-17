@@ -80,7 +80,6 @@ describe("Cart Model", () => {
     it ("Eliminar el productId del carrito", async () => {
         await service.addProductToCart(cartId, productId);
         const result = await service.deleteProductFromCart(cartId, productId);
-        console.log(result);
         expect(result).to.be.an('object');
         expect(result.modifiedCount).to.equal(1);
     });
