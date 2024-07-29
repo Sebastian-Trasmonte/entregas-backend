@@ -34,8 +34,6 @@ export default class UserController {
     async ValidateJWTPassword(jwt) {
 
         const jwtToken = verifyJWT(jwt);
-        console.log("date", Date.now());
-
         if (jwtToken === null || Date.now() > jwtToken.exp * 1000) {
             throw new Error("El tiempo de expiracion para resetear la contraseña ha expirado, genere uno nuevo");
         }
