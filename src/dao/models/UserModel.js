@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
-import {createHash} from "../../helpers/utils.js";
+import {
+    createHash
+} from "../../helpers/utils.js";
 
 const userCollection = "users";
 
@@ -37,6 +39,20 @@ const userSchema = new mongoose.Schema({
             }
         }],
         default: []
+    },
+    documents: {
+        type: [{
+            name: {
+                type: String
+            },
+            reference: {
+                type: String
+            }
+        }]
+    },
+    last_connection: {
+        type: Date,
+        default: Date.now
     }
 });
 

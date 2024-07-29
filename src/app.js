@@ -16,7 +16,8 @@ import Product from './models/Product.js';
 import ProductController from './controllers/productController.js';
 import MessageManagerDB from './dao/MessageManagerDB.js';
 import mongoose from 'mongoose';
-import sessionRouter from './routes/user.router.js';
+import sessionRouter from './routes/session.router.js';
+import userRouter from './routes/user.router.js';
 import testRouter from './routes/test.route.js';
 import session from 'express-session';
 import mongoStore from 'connect-mongo';
@@ -92,6 +93,7 @@ app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/", viewsRouter);
 app.use("/api/session", sessionRouter);
+app.use("/api/users", userRouter);
 
 app.use("/mockingproducts", testRouter);
 

@@ -120,7 +120,7 @@ paths:
                 password:
                   type: string
                   example: newpass1234
-  /api/session/premium/{uid}:
+  /api/user/premium/{uid}:
     put:
       tags:
         - Users

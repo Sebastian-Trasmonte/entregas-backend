@@ -1,10 +1,14 @@
-import { errorsEnum } from '../helpers/errorsEnum.js';
+import {
+    errorsEnum
+} from '../helpers/errorsEnum.js';
 import userModel from './models/userModel.js';
 import mongoose from 'mongoose';
 
 export default class UserManager {
-    getUser = async (email)  => {     
-        const user = await userModel.findOne({ email: email });
+    getUser = async (email) => {
+        const user = await userModel.findOne({
+            email: email
+        });
         return user;
     }
     updatePassword = async (email, password) => {
@@ -18,14 +22,43 @@ export default class UserManager {
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return errorsEnum.INVALID_MONGOOSE_ID;
         }
-        
-        let user = await userModel.findById(id);
-        let role = user.role == 'premium' ? 'user' : 'premium';
+
+        let user = await userModel.findById(id);   
+        if (user.role == 'premium') {
+            user.role = 'user';
+        } else {
+            if (user.documents.length != 3) {
+                return errorsEnum.USER_NOT_HAS_DOCUMENTS;
+            }
+            user.role = 'premium';
+        }
         await userModel.updateOne({
             _id: id
         }, {
-            role: role
+            role: user.role
         });
-        return role;
+        return user.role;
+    }
+    updateSessionTime = async (email) => {
+        await userModel.updateOne({
+            email: email
+        }, {
+            last_connection: Date.now()
+        });
+    }
+    addDocumentToUser = async (email,files) => {
+        const dbFiles = files.map(file => {
+            return {
+                name: file.filename,
+                reference: file.path
+            }
+        });
+        await userModel.updateOne({
+            email: email
+        }, {
+            $push: {
+                documents: dbFiles
+            }
+        });
     }
 }

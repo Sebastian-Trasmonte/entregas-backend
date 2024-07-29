@@ -1,172 +1,53 @@
 import {
     Router
 } from "express";
-import passport from "passport";
 import UserController from "../controllers/userController.js";
+import { errorsEnum } from "../helpers/errorsEnum.js";
+import { uploader } from "../helpers/utils.js";
+import { addMulterRoute } from "../middlewares/multer.js";
 
 
 const router = Router();
 const userController = new UserController();
 
-router.post("/register",
-    passport.authenticate("register", {
-        failureRedirect: "/api/ssesion/failRegister",
-    }),
-    async (req, res) => {
-        try {
-            req.session.failRegister = false;
-            res.redirect("/login");
-        } catch (e) {
-            req.session.failRegister = true;
-            res.redirect("/register");
-        }
-    });
-
-router.get("/failRegister",
-    (req, res) => {
-        res.status(400).send({
-            message: "Error al registrar usuario",
-            status: "error"
-        });
-    });
-
-router.post("/login",
-    passport.authenticate("login", {
-        failureRedirect: "/api/session/failLogin"
-    }),
-    async (req, res) => {
-        try {
-
-            if (!req.user) {
-                req.session.failLogin = true;
-                res.redirect("/login");
-            }
-
-            req.session.user = {
-                first_name: req.user.first_name,
-                last_name: req.user.last_name,
-                email: req.user.email,
-                age: req.user.age,
-                role: req.user.role
-            }
-            req.session.failLogin = false;
-
-            if (req.user.role === "admin" || req.user.role === "premium") {
-                res.redirect("/");
-                return;
-            }
-            res.redirect("/products");
-        } catch (e) {
-            req.session.failLogin = true;
-            res.redirect("/login");
-        }
-    });
-
-router.get("/failLogin",
-    (req, res) => {
-        res.status(400).send({
-            message: "Error al loguear usuario",
-            status: "error"
-        });
-    });
-
-router.post("/logout", async (req, res) => {
-    req.session.user = null;
-    res.redirect("/login");
-});
-
-router.get("/login/github",
-    passport.authenticate("github", {
-        scope: ["user:email"]
-    }),
-    async (req, res) => {
-        res.send("Session API");
-    });
-
-router.get("/githubcallback",
-    passport.authenticate("github", {
-        failureRedirect: "/login"
-    }),
-    async (req, res) => {
-        req.session.user = req.user;
-        if (req.user.role === "admin") {
-            res.redirect("/");
-            return;
-        }
-        res.redirect("/products");
-    });
-
-router.get("/current", async (req, res) => {
-    res.send(req.session.user);
-})
-
-router.post("/forgotpassword", async (req, res) => {
-    res.render(
-        "forgotPassword", {
-            title: "Forgot password",
-            style: "index.css",
-        }
-    )
-});
-
-router.post("/getLinkForgetPassword", async (req, res) => {
-    try {
-        const {
-            email
-        } = req.body;
-        await userController.getLinkForgetPassword(email);
-        res.redirect("/login");
-    } catch (e) {
-        res.status(400).send({
-            message: e.message,
-            status: "error"
-        });
-    }
-});
-
-router.get("/resetpasswordcallback/:jwt", async (req, res) => {
-    try {
-        const jwt = req.params.jwt;
-        let email = await userController.ValidateJWTPassword(jwt);
-        res.render(
-            "resetPassword", {
-                title: "Reset password",
-                email: email,
-                style: "index.css",
-            }
-        )
-    } catch (e) {
-        res.status(400).send({
-            message: e.message,
-            status: "error"
-        });
-    }
-});
-
-router.post("/resetpassword", async (req, res) => {
-    const {
-        email,
-        password
-    } = req.body;
-    try {
-        await userController.resetPassword(email, password);
-        res.redirect("/login");
-    } catch (e) {
-        res.status(400).send({
-            message: e.message,
-            status: "error"
-        });
-    }
-});
-
 router.get("/premium/:uid", async (req, res) => {
     try {
-        const uid = req.params.uid;        
-        let roleUpdated=  await userController.changeUserRol(uid);
-        console.log(roleUpdated)
+        const uid = req.params.uid;
+        let roleUpdated = await userController.changeUserRol(uid);
+        if (roleUpdated == errorsEnum.USER_NOT_HAS_DOCUMENTS) {
+            res.status(400).send({
+                message: "El usuario no tiene documentos",
+                status: "error"
+            });
+            return;
+        }
         req.session.user.role = roleUpdated;
         res.status(200).send({
             message: "Rol actualizado de usuario",
+            status: "success"
+        });
+    } catch (e) {
+        res.status(400).send({
+            message: e.message,
+            status: "error"
+        });
+    }
+});
+
+router.post('/:uid/documents',addMulterRoute('users'), uploader.array('files', 3), async (req, res) => {
+    const files = req.files;
+    const uid = req.params.uid;
+    try {
+        const email = req.session.user.email;
+        if (!files) {
+            throw new Error("Documents not found");
+        }
+        if (uid != req.session.user.id) {
+            throw new Error("UserId not match with the current session");
+        }       
+        await userController.addDocumentToUser(email,files);
+        res.status(200).send({
+            message: "Documento subido",
             status: "success"
         });
     } catch (e) {

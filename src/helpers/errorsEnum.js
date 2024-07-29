@@ -6,4 +6,5 @@ export const errorsEnum = {
     INVALID_PRODUCT: 'The product is invalid',
     ENOUGHT_STOCK: 'All products dont have enough stock',
     PRODUCT_NOT_EXISTS_IN_CART: 'The product does not exist in the cart',
+    USER_NOT_HAS_DOCUMENTS: 'The user does not have documents'
 }

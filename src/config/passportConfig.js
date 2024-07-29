@@ -6,11 +6,13 @@ import userModel from  "../dao/models/userModel.js";
 import {
     isSamePassword
 } from "../helpers/utils.js";
+import UserController from "../controllers/userController.js";
 
 
 const localStrategy = local.Strategy;
 const clientId = config.client_id;
 const clientSecret = config.client_secret;
+const userController = new UserController();
 
 const inicializatePassport = () => {
     passport.use('register', new localStrategy({
@@ -58,21 +60,7 @@ const inicializatePassport = () => {
         },
         async (req,username, password, done) => {
             try {
-                const user = await userModel.findOne({
-                    email: username
-                });
-                if (!user) {
-                    return done(null, false, {
-                        message: "User not found"
-                    });
-                }
-             
-                if (!isSamePassword(user,password)) {
-                    return done(null, false, {
-                        message: "Invalid password"
-                    });
-                }
-                return done(null, user);
+               return userController.login(username, password, done);
             } catch (error) {
                 return done(error.message);
             }

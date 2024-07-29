@@ -16,13 +16,15 @@ export default class UserService {
         return false;
     }
 
-    async validatePassword(email, password) {
+    async resetIsSamePassword(email, password) {
         let user = await this.userManager.getUser(email);
         if (user) {
-
-            return isSamePassword(user,password);
+            return isSamePassword(user, password);
         }
         return false;
+    }
+    async isSamePassword(user, password) {
+        return isSamePassword(user, password);
     }
 
     async updatePassword(email, password) {
@@ -32,8 +34,14 @@ export default class UserService {
     async getUser(email) {
         return await this.userManager.getUser(email);
     }
-    async changeUserRol(id){
+    async changeUserRol(id) {
         return await this.userManager.changeUserRol(id);
     }
-
+    async updateSessionTime(email){
+        return await this.userManager.updateSessionTime(email);
+    }
+    async addDocumentToUser(email,files)
+    {
+        return await this.userManager.addDocumentToUser(email,files);
+    }
 };

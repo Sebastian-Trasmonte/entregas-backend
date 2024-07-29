@@ -28,11 +28,11 @@ describe("User Model", () => {
         assert.equal(exists, false);
     });
     it ("password correcta", async () => {
-        const isSame = await service.validatePassword("adminCoder@coder.com","adminCod3r123");
+        const isSame = await service.resetIsSamePassword("adminCoder@coder.com","adminCod3r123");
         assert.equal(isSame, true);
     });
     it ("password invalida", async () => {
-        const isSame = await service.validatePassword("adminCoder@coder.com","adminCod3r");
+        const isSame = await service.resetIsSamePassword("adminCoder@coder.com","adminCod3r");
         assert.equal(isSame, false);
     });
 });
