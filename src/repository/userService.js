@@ -40,8 +40,17 @@ export default class UserService {
     async updateSessionTime(email){
         return await this.userManager.updateSessionTime(email);
     }
-    async addDocumentToUser(email,files)
+    async addDocumentToUser(uid,files)
     {
-        return await this.userManager.addDocumentToUser(email,files);
+        return await this.userManager.addDocumentToUser(uid,files);
+    }
+    async getAllUsers() {
+        return await this.userManager.getAllUsers();
+    }
+    async deleteAndGetInactiveUsers(){
+        return await this.userManager.deleteAndGetInactiveUsers();
+    }
+    async deleteUserById(uid){
+        return await this.userManager.deleteUserById(uid);
     }
 };

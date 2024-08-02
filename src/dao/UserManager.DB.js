@@ -27,7 +27,7 @@ export default class UserManager {
         if (user.role == 'premium') {
             user.role = 'user';
         } else {
-            if (user.documents.length != 3) {
+            if (user.documents.length < 3) {
                 return errorsEnum.USER_NOT_HAS_DOCUMENTS;
             }
             user.role = 'premium';
@@ -46,7 +46,7 @@ export default class UserManager {
             last_connection: Date.now()
         });
     }
-    addDocumentToUser = async (email,files) => {
+    addDocumentToUser = async (uid,files) => {
         const dbFiles = files.map(file => {
             return {
                 name: file.filename,
@@ -54,11 +54,34 @@ export default class UserManager {
             }
         });
         await userModel.updateOne({
-            email: email
+            _id: uid
         }, {
             $push: {
                 documents: dbFiles
             }
+        });
+    }
+    getAllUsers = async () => {
+        return await userModel.find({}, {
+            password: 0
+        }).lean();
+    }
+    deleteAndGetInactiveUsers = async () => {
+        var userInactive = await userModel.find({
+            last_connection: {
+                $lt: new Date(new Date().setDate(new Date().getDate() - 2))
+            }
+        });
+        await userModel.deleteMany({
+            last_connection: {
+                $lt: new Date(new Date().setDate(new Date().getDate() - 2))
+            }
+        });
+        return userInactive;
+    }
+    deleteUserById = async (uid) => {
+        return await userModel.deleteOne({
+            _id: uid
         });
     }
 }

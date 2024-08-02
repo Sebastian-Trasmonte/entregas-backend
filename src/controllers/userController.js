@@ -12,6 +12,7 @@ export default class UserController {
     constructor() {
         this.notificationController = new NotificationController();
         this.userService = new UserService();
+
     }
 
     async getLinkForgetPassword(email) {
@@ -70,14 +71,14 @@ export default class UserController {
     async changeUserRol(id) {
         return await this.userService.changeUserRol(id);
     }
-    async login(email, password,done) {
+    async login(email, password, done) {
         let user = await this.userService.getUser(email);
         if (!user) {
-             return done(null, false, {
+            return done(null, false, {
                 message: "User not found"
             });
         }
-        if (!this.userService.isSamePassword(user,password)) {
+        if (!this.userService.isSamePassword(user, password)) {
             return done(null, false, {
                 message: "Invalid password"
             });
@@ -86,10 +87,35 @@ export default class UserController {
         return done(null, user);
     }
     async logout(email) {
-        this.userService.updateSessionTime(email);  
+        this.userService.updateSessionTime(email);
     }
-    async addDocumentToUser(email,files) 
-    {
-        return await this.userService.addDocumentToUser(email,files);
+    async addDocumentToUser(uid, files) {
+        return await this.userService.addDocumentToUser(uid, files);
+    }
+    async getAllUsers() {
+        const users = await this.userService.getAllUsers();
+        users.forEach(user => {
+            user.last_connection = new Date(user.last_connection).toLocaleDateString('en-US', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+            })
+        });
+        return users;
+    }
+    async deleteInactiveUsers() {
+        var usersInactive = await this.userService.deleteAndGetInactiveUsers();
+        usersInactive.forEach(user => {
+            const info = {
+                recipient: user.email,
+                subject: "Account Deleted",
+                text: "Your account has been deleted due to inactivity",
+                title: "Account Deleted"
+            };
+            this.notificationController.sendEmail(info);
+        });
+    }
+    async deleteUserById(uid) {
+        return await this.userService.deleteUserById(uid);
     }
 }

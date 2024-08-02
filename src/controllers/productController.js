@@ -60,7 +60,6 @@ export default class ProductController {
         }
 
         const result = this.productService.removeProductById(productId);
-        socketServer.emit("product-deleted", productId);
         return result
     }
 }

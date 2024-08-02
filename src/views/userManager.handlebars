@@ -1,0 +1,24 @@
+<div>
+    <h1>Bienvenido usuario: {{name}}</h1>
+    <h1>Tu rol es: {{role}}</h1>
+    <button class="logout" onclick="logout()">Cerrar sesión</button>
+    <a href="/" class="button">Administrar productos</a></span>
+
+    <div class="product-grid" id="product-grid">
+        {{#each users}}
+        <div class="product-card" id="userId{{this._id}}">
+            <h2>{{this.first_name}} {{this.last_name}}</h2>
+            <p>ID: {{this._id}}</p>
+            <p>Email: {{this.email}}</p>
+            <p>Edad: {{this.age}}</p>
+            <p id="rol">Rol: {{this.role}}</p>
+            <p>Última conexión: {{this.last_connection}}</p>
+            <button class="delete-user" onclick="deleteUser('{{this._id}}');">Eliminar</button>
+            <button class="modify-role" onclick="modifyRole('{{this._id}}');">Modificar rol</button>
+        </div>
+        {{/each}}
+
+    </div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/user.js"></script>

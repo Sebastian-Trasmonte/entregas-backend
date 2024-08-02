@@ -10,7 +10,7 @@ const userController = new UserController();
 
 router.post("/register",
     passport.authenticate("register", {
-        failureRedirect: "/api/ssesion/failRegister",
+        failureRedirect: "/api/session/failRegister",
     }),
     async (req, res) => {
         try {

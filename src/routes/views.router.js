@@ -1,13 +1,15 @@
 import { Router } from "express";
 import MessageManagerDB from "../dao/MessageManagerDB.js";
-import {auth,user, premiumOrAdmin }from "../middlewares/auth.js";
+import {auth,user, premiumOrAdmin, admin }from "../middlewares/auth.js";
 import ProductController from "../controllers/productController.js";
 import CartController from "../controllers/cartController.js";
+import UserController from "../controllers/userController.js";
 
 const router = Router();
 const productController = new ProductController();
 const messageManagerDB = new MessageManagerDB();
 const cartController = new CartController();
+const userController = new UserController();
 
 router.get("/", premiumOrAdmin , async (req, res) => {
     const products = await productController.getAllProducts();
@@ -19,6 +21,7 @@ router.get("/", premiumOrAdmin , async (req, res) => {
             style: "index.css",
             name: req.session.user.first_name,
             role: req.session.user.role,
+            isAdmin: req.session.user.role === "admin",
             email: req.session.user.email
         }
     )
@@ -140,6 +143,19 @@ router.get('/resetPassword', async (req, res) => {
         "forgotPassword",
         {
             style: "index.css",
+        }
+    )
+});
+
+router.get('/users',async (req, res) => {
+    const users = await userController.getAllUsers();
+    res.render(
+        "userManager",
+        {
+            style: "index.css",
+            users: users,
+            name: req.session.user.first_name,
+            role: req.session.user.role,
         }
     )
 });

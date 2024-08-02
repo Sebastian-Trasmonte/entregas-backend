@@ -1,5 +1,8 @@
 import NotificationService from '../repository/notificationService.js';
 import config from '../config/config.js';
+import {
+    logger
+} from '../helpers/logger.js';
 
 export default class NotificationController {
     constructor() {
@@ -17,7 +20,11 @@ export default class NotificationController {
         }
     }
 
-    async sendEmail(info) {     
+    async sendEmail(info) {
+        if (!info.email) {
+            logger.info("Email does send, no email provided");
+            return 0;
+        }
         return this.notificationService.sendEmail(info);
     }
 }

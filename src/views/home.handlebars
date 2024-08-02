@@ -2,6 +2,9 @@
     <h1>Bienvenido usuario: {{name}}</h1>
     <h1>Tu rol es: {{role}}</h1>
      <button class="logout" onclick="logout()">Cerrar sesión</button>
+    {{#if isAdmin}}
+        <a href="/users" class="button">Administrar usuarios</a></span>
+    {{/if}}
     <h1 class="titleForm">Crear un nuevo producto</h1>
     <div class="productForm">
         <input type="hidden" name="userRole" id="userRole" value="{{role}}">
@@ -36,4 +39,4 @@
     </div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
-<script src="/js/index.js"></script>
+<script src="/js/product.js"></script>
