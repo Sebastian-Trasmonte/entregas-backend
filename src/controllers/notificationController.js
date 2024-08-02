@@ -21,7 +21,7 @@ export default class NotificationController {
     }
 
     async sendEmail(info) {
-        if (!info.email) {
+        if (!info.recipient) {
             logger.info("Email does send, no email provided");
             return 0;
         }

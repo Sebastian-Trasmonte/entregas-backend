@@ -1,10 +1,12 @@
 import ProductService from '../repository/productService.js';
 import socketServer from '../app.js';
+import NotificationController from './notificationController.js';
 
 export default class ProductController {
 
     constructor() {
         this.productService = new ProductService();
+        this.notificationController = new NotificationController
     }
 
     async getAllProducts() {
@@ -52,12 +54,22 @@ export default class ProductController {
     }
 
     async removeProductById(productId, userRole, userEmail) {
+        const product = await this.productService.getProductsById(productId);
+        
         if (userRole == "premium") {
-            const product = await this.productService.getProductsById(productId);
             if (product.owner != userEmail) {
                 throw new Error("You can't delete this product, you are not the owner");
             }
         }
+        if (product.owner != 'admin'){
+            const info = {
+                recipient: product.owner,
+                subject: "Your product has been deleted",
+                text: `Your product ${product.title} has been deleted by an admin. If you think this is a mistake, please contact us.`,
+                title: "Product deleted"
+            };
+            this.notificationController.sendEmail(info);
+        }      
 
         const result = this.productService.removeProductById(productId);
         return result

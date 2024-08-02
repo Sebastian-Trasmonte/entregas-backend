@@ -58,10 +58,3 @@ socket.on("product-added", (product) => {
     productsContainer.appendChild(productDiv);
 })
 
-function logout() {
-    fetch("/api/session/logout", {
-        method: "POST"
-    }).then(() => {
-        window.location.href = "/login";
-    });
-}
