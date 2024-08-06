@@ -48,7 +48,8 @@ router.post("/login",
                 email: req.user.email,
                 age: req.user.age,
                 role: req.user.role,
-                id: req.user._id
+                id: req.user._id,
+                cart: req.cart
             }
             req.session.failLogin = false;
 

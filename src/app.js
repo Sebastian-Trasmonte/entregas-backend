@@ -35,6 +35,7 @@ import {
 import cluster from 'cluster';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUiExpress from 'swagger-ui-express';
+import CartController from './controllers/cartController.js';
 
 
 let socketServer = null;
@@ -55,6 +56,7 @@ const __filename = fileURLToPath(
     import.meta.url);
 const __dirname = dirname(__filename);
 const productController = new ProductController();
+const cartController = new CartController();
 const messageManager = new MessageManagerDB();
 
 const app = express();
@@ -134,7 +136,6 @@ socketServer.on("connection", (socket) => {
         }
 
     })
-
     socket.on("add-product", async (data) => {
         const {
             title,
@@ -154,16 +155,29 @@ socketServer.on("connection", (socket) => {
         }
 
     })
-
     socket.on("message", async data => {
         await messageManager.addMessage(data.user, data.message);
         const messages = await messageManager.getAllMessages();
         socketServer.emit("messagesLogs", messages);
     });
-
     socket.on("userConnect", data => {
         socket.emit("messagesLogs", messages);
         socket.broadcast.emit("newUser", data);
+    });
+    socket.on("add-to-cart", async data => {
+        const {
+            productId,
+            quantity,
+            cart,
+            role,
+            email
+        } = data;
+        try {
+            await cartController.addProductToCart(cart, productId, role, email, quantity);
+            socket.emit("productAddedToCart", productId);
+        } catch (e) {
+            socket.emit("error-occurred", e.message);
+        }
     });
 });
 

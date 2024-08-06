@@ -3,15 +3,18 @@ import {
 } from "express";
 import {
   admin,
-  user
+  user,
+  auth
 } from '../middlewares/auth.js';
 import CartController from "../controllers/cartController.js";
-import { logger } from "../helpers/logger.js";
+import {
+  logger
+} from "../helpers/logger.js";
 
 const router = Router();
 const cartController = new CartController();
 
-router.get('/:id', admin, async (req, res) => {
+router.get('/:id',auth, async (req, res) => {
   try {
     const cartId = req.params.id;
     res.send(await cartController.getCartById(cartId));
@@ -23,9 +26,12 @@ router.get('/:id', admin, async (req, res) => {
   }
 });
 
-router.post('/', admin, async (req, res) => {
+router.post('/', user, async (req, res) => {
   try {
-    res.send(await cartController.addCart());
+    const userId = req.session.user.id;
+    const idCart = await cartController.addCart(userId);
+    req.session.user.cartId = idCart._id;
+    res.send(idCart);
   } catch (error) {
     logger.error(`error ${error}`)
     return res.status(500).send({
@@ -34,12 +40,15 @@ router.post('/', admin, async (req, res) => {
   }
 });
 
-router.post('/:id/product/:productId', async (req, res) => {
+router.post('/:id/product/:productId',auth, async (req, res) => {
   try {
     const cartId = req.params.id;
     const productId = req.params.productId;
-    const {email,role}= req.session.user;
-    res.send(await cartController.addProductToCart(cartId, productId,role,email));
+    const {
+      email,
+      role
+    } = req.session.user;
+    res.send(await cartController.addProductToCart(cartId, productId, role, email));
   } catch (error) {
     logger.error(`error ${error}`)
     return res.status(500).send({

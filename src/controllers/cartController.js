@@ -13,19 +13,18 @@ export default class CartController {
         return this.cartService.getCartById(cartId);
     }
 
-    async addCart() {
-        return await this.cartService.addCart();
+    async addCart(userId) {
+        return await this.cartService.addCart(userId);
     }
 
-    async addProductToCart(cartId, productId, role, email) {
+    async addProductToCart(cartId, productId, role, email, quantity) {
         if (role == "premium") {
             const product = await this.productService.getProductsById(productId);
             if (product.owner == email) {
                 throw new Error("You can't add this product to the cart, you are the owner");
             }
         }
-
-        return await this.cartService.addProductToCart(cartId, productId);
+        return await this.cartService.addProductToCart(cartId, productId,quantity);
     }
 
     async deleteProductFromCart(id, productId) {

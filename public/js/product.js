@@ -3,16 +3,16 @@ const socket = io();
 function deleteProduct(id) {
     const userRole = document.getElementById('userRole').value;
     const userEmail = document.getElementById('userEmail').value;
-    socket.emit("delete-product", id, userRole, userEmail)
+    socket.emit("delete-product", {
+        id,
+        userRole,
+        userEmail
+    })
 }
 
 socket.on("product-deleted", (id) => {
     const product = document.getElementById(`productId${id}`);
     product.remove();
-})
-
-socket.on("error-occurred", (message) => {
-    alert(message);
 })
 
 function addProduct() {
@@ -58,3 +58,33 @@ socket.on("product-added", (product) => {
     productsContainer.appendChild(productDiv);
 })
 
+function addToCart(productId, cart, role, email) {
+    const quantity = document.getElementById('stockToAdd').value
+    socket.emit("add-to-cart", {productId, quantity, cart, role, email});
+}
+
+function add(stockMax) {
+    const stockToAdd = document.getElementById('stockToAdd').value;
+    const newStock = parseInt(stockToAdd) + 1;
+    if (newStock <= stockMax)
+        document.getElementById('stockToAdd').value = newStock;
+}
+
+function subtract() {
+    const stockToAdd = document.getElementById('stockToAdd').value;
+    const newStock = parseInt(stockToAdd) - 1;
+    if (newStock >= 1)
+        document.getElementById('stockToAdd').value = newStock;
+}
+
+socket.on("productAddedToCart", (productId) => {
+    alert(`Producto ${productId} añadido al carrito`);
+})
+
+socket.on("error-occurred", (message) => {
+    alert(message);
+})
+
+function goBack() {
+    window.history.back();
+}

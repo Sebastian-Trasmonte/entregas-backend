@@ -9,12 +9,12 @@ export default class CartService {
         return this.cartManager.getCartById(cartId);
     }
 
-    async addCart() {
-        return await this.cartManager.addCart();
+    async addCart(userId) {
+        return await this.cartManager.addCart(userId);
     }
 
-    async addProductToCart(cartId, productId) {
-        return await this.cartManager.addProductToCart(cartId, productId);
+    async addProductToCart(cartId, productId,quantity) {
+        return await this.cartManager.addProductToCart(cartId, productId,quantity);
     }
 
     async deleteProductFromCart(id, productId) {
@@ -35,5 +35,8 @@ export default class CartService {
 
     async purchaseCart(cartId) {
         return await this.cartManager.purchaseCart(cartId);
+    }
+    async getCartByUser(email) {
+        return await this.cartManager.getCartByUser(email);
     }
 }

@@ -1,20 +1,30 @@
-import { errorsEnum } from '../helpers/errorsEnum.js';
+import {
+    errorsEnum
+} from '../helpers/errorsEnum.js';
 import cartModel from './models/cartModel.js'
 import productModel from './models/productModel.js'
 import mongoose from 'mongoose';
-import { logger } from '../helpers/logger.js';
+import {
+    logger
+} from '../helpers/logger.js';
+import userModel from './models/userModel.js';
 
 export default class CartManagerDB {
-    addCart = async () => {
+    addCart = async (userId) => {
         try {
             const result = await cartModel.create({});
-            return result;
+            await userModel.updateOne({
+                _id: userId
+            }, {
+                cart: result
+            });
+            return result._id;
         } catch (error) {
             logger.error(error.message);
             throw new Error("Error in create cart");
         }
     }
-    addProductToCart = async (idCart, idProduct) => {
+    addProductToCart = async (idCart, idProduct, quantityToAdd) => {
 
         if (!mongoose.Types.ObjectId.isValid(idCart) || !mongoose.Types.ObjectId.isValid(idProduct)) {
             throw new Error("Id cart or IdProduct is an invalid mongoose id")
@@ -46,14 +56,31 @@ export default class CartManagerDB {
         if (!product) {
             throw new Error('Product does not exist');
         }
-        if (cart.productsCart.length != 0 && cart.productsCart.find(product => product.product.toString() === idProduct)) {
-            cart.productsCart.find(product => product.product.toString() === idProduct).quantity += 1;
+
+        if (quantityToAdd != undefined && product.stock < quantityToAdd) {
+            throw new Error('There is not enough stock');
+        }
+
+        quantityToAdd = quantityToAdd ?? 1;
+
+        if (cart.productsCart.length != 0 &&
+            cart.productsCart.find(product => product.product.toString() === idProduct)) {
+            const currentQuantity = Number(cart.productsCart.find(product => product.product.toString() === idProduct).quantity);
+            
+            if (currentQuantity + Number(quantityToAdd) > product.stock) {
+                throw new Error('There is not enough stock');
+            }
+            cart.productsCart.find(product => product.product.toString() === idProduct).quantity = currentQuantity + Number(quantityToAdd);
+
             const result = await cartModel.updateOne({
                 _id: idCart
             }, cart);
             return result;
         } else {
-            cart.productsCart.push({product: idProduct, quantity: 1});
+            cart.productsCart.push({
+                product: idProduct,
+                quantity: quantityToAdd
+            });
             const result = await cartModel.updateOne({
                 _id: idCart
             }, cart);
@@ -169,14 +196,13 @@ export default class CartManagerDB {
         }
         let productsWithoutStock = [];
         let productWithStock = [];
-  
-      
+
+
         for (let product of cart.productsCart) {
             if (product.product.stock < product.quantity) {
                 logger.warning('The product ' + product.product.title + ' does not have enough stock')
                 productsWithoutStock.push(product);
-            }
-            else{
+            } else {
                 productWithStock.push(product);
             }
         }
@@ -187,12 +213,19 @@ export default class CartManagerDB {
             product.product.stock -= product.quantity;
             await productModel.updateOne({
                 _id: product.product._id
-            }, product.product);        
+            }, product.product);
         }
         cart.productsCart = productsWithoutStock;
-         await cartModel.updateOne({
+        await cartModel.updateOne({
             _id: idCart
         }, cart);
         return productWithStock;
-    }    
+    }
+    getCartByUser(email) {
+        //hacer un get id con el email y luego buscar el carrito con ese id
+        const cart = userModel.findOne({
+            email
+        }).populate('cart');
+        return cart;
+    }
 }

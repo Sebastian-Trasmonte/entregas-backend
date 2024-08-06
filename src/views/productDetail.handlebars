@@ -1,11 +1,25 @@
-<div class="product-grid" id="product-grid">
-  <div class="product-card" id="productId{{_id}}">
-    <h2>{{title}}</h2>
-    <p>Categoria: {{product.category}}</p>
-    <p>Precio: {{product.price}}</p>
-    <p>Descripción: {{product.description}}</p>
-    <p>Código: {{product.code}}</p>
-    <p>En stock: {{product.stock}}</p>
-    <button class="add-cart">Agregar al carrito</button>
+<body>
+  <button class="logout" onclick="logout()">Cerrar sesión</button>
+  <button class="back" onclick="goBack()">Volver</button>
+  <div class="product-grid" id="product-grid">
+    <div class="product-card" id="productId{{product._id}}">
+      <h2>{{title}}</h2>
+      <p>Categoria: {{product.category}}</p>
+      <p>Precio: {{product.price}}</p>
+      <p>Descripción: {{product.description}}</p>
+      <p>Código: {{product.code}}</p>
+      <p>En stock: {{product.stock}}</p>
+      <button onclick="subtract()">-</button>
+      <input id="stockToAdd" type="number" value="1" min="1" max="{{product.stock}}" disabled="true">
+      <button onclick="add({{product.stock}})">+</button>
+      <button class="product-detail" onclick="addToCart('{{product._id}}','{{cartId}}','{{user.role}}','{{user.email}}')">
+        Agregar al carrito
+      </button>
+    </div>
   </div>
-</div>
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/product.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/session.js"></script>
