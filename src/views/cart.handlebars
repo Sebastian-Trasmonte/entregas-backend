@@ -8,5 +8,9 @@
             <p>Precio: {{this.product.price}}</p>
         </div>
     {{/each}}
-    <p>Total: {{total}}</p>
+    <p class="cart-total">Total: {{total}}</p>
+    <button class="cart-checkout" onclick="purchase('{{cartId}}')">Comprar</button>
+    <button class="cart-clear" onclick="clearCart('{{cartId}}')">Vaciar carrito</button>
+    <button class="cart-back" onclick="window.location.href = '/products'">Volver</button>
 </div>
+<script src="/js/cart.js"></script>

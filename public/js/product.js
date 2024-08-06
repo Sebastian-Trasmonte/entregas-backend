@@ -60,7 +60,13 @@ socket.on("product-added", (product) => {
 
 function addToCart(productId, cart, role, email) {
     const quantity = document.getElementById('stockToAdd').value
-    socket.emit("add-to-cart", {productId, quantity, cart, role, email});
+    socket.emit("add-to-cart", {
+        productId,
+        quantity,
+        cart,
+        role,
+        email
+    });
 }
 
 function add(stockMax) {
@@ -87,4 +93,11 @@ socket.on("error-occurred", (message) => {
 
 function goBack() {
     window.history.back();
+}
+
+function goToCart(idCart) {
+    if (!idCart)
+        alert("Todavía no se generó ningún carrito");
+    else
+        window.location.href = `/cart/${idCart}`;        
 }

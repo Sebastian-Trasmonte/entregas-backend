@@ -113,7 +113,8 @@ router.get("/products", auth, async (req, res) => {
             sort: sort,
             query: query,
             name: req.session.user.first_name,
-            role: req.session.user.role
+            role: req.session.user.role,
+            cartId: req.session.user.cart != undefined && req.session.user.cart.length >0 ? req.session.user.cart[0]._id : null,
         }
     )
 });
@@ -122,6 +123,7 @@ router.get("/productDetail/:id", auth, async (req, res) => {
     const id = req.params.id;
     const product = await productController.getProductsById(id);
     const user = req.session.user;
+
     if (user.cart == undefined || user.cart.length == 0) 
         {
         user.cart.push(await cartController.addCart(req.session.user._id));
@@ -155,7 +157,9 @@ router.get('/cart/:id', auth, async (req, res) => {
 
     res.render('cart', {
         cartsProducts: products,
-        total: total
+        total: total,
+        style: "index.css",
+        cartId: id
     });
 });
 
@@ -178,5 +182,6 @@ router.get('/users', async (req, res) => {
         }
     )
 });
+
 
 export default router;

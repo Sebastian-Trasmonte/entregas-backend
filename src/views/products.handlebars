@@ -2,6 +2,7 @@
   <h1>Bienvenido usuario: {{name}}</h1>
   <h1>Tu rol es: {{role}}</h1>
   <button class="logout" onclick="logout()">Cerrar sesión</button>
+  <button class="cart" onclick="goToCart('{{cartId}}')">Ver carrito</button>
   <div class="product-grid" id="product-grid">
     {{#each products}}
       <div class="product-card" id="productId{{this._id}}">

@@ -41,16 +41,8 @@ router.post("/login",
                 req.session.failLogin = true;
                 res.redirect("/login");
             }
+            req.session.user = req.user;
 
-            req.session.user = {
-                first_name: req.user.first_name,
-                last_name: req.user.last_name,
-                email: req.user.email,
-                age: req.user.age,
-                role: req.user.role,
-                id: req.user._id,
-                cart: req.cart
-            }
             req.session.failLogin = false;
 
             if (req.user.role === "admin" || req.user.role === "premium") {

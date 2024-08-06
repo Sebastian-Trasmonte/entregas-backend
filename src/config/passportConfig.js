@@ -60,7 +60,9 @@ const inicializatePassport = () => {
         },
         async (req,username, password, done) => {
             try {
-               return userController.login(username, password, done);
+               const user = userController.login(username, password, done);
+               delete user.password;
+               return user;
             } catch (error) {
                 return done(error.message);
             }
