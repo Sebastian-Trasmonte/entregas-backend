@@ -25,5 +25,6 @@ export default {
     notification:process.env.NOTIFICATIONS,
     recipient:process.env.RECIPIENT,
     env_loggin:process.env.ENV_LOGGIN,
-    jwt_secret:process.env.JWT_SECRET
+    jwt_secret:process.env.JWT_SECRET,
+    api_key_stripe:process.env.API_KEY_STRIPE,
 }

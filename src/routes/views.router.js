@@ -123,12 +123,15 @@ router.get("/productDetail/:id", auth, async (req, res) => {
     const id = req.params.id;
     const product = await productController.getProductsById(id);
     const user = req.session.user;
-
+   
     if (user.cart == undefined || user.cart.length == 0) 
-        {
+    {
+        console.log("1",user);
         user.cart.push(await cartController.addCart(req.session.user._id));
+        console.log("2",user);
         req.session.user = user;
     }
+    console.log("3",user);
     res.render(
         "productDetail", {
             title: "Product details",
@@ -139,6 +142,7 @@ router.get("/productDetail/:id", auth, async (req, res) => {
         }
     )
 });
+
 
 router.get('/cart/:id', auth, async (req, res) => {
     const id = req.params.id;

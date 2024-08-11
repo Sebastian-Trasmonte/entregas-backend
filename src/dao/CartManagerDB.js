@@ -8,6 +8,10 @@ import {
     logger
 } from '../helpers/logger.js';
 import userModel from './models/userModel.js';
+import Stripe from 'stripe';
+import config from '../config/config.js';
+
+const stripe = new Stripe(config.api_key_stripe);
 
 export default class CartManagerDB {
     addCart = async (userId) => {
@@ -219,6 +223,18 @@ export default class CartManagerDB {
         await cartModel.updateOne({
             _id: idCart
         }, cart);
+
+        let total = 0;
+        for (let item of productWithStock) {
+            total += item.product.price * item.quantity;
+        }
+       
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: total * 100, // amount in cents
+            currency: 'usd',
+            payment_method_types: ['card'],
+        });
+
         return productWithStock;
     }
     getCartByUser(email) {
