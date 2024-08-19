@@ -143,7 +143,6 @@ router.get("/productDetail/:id", auth, async (req, res) => {
     )
 });
 
-
 router.get('/cart/:id', auth, async (req, res) => {
     const id = req.params.id;
     const cart = await cartController.getCartById(id);
