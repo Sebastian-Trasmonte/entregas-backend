@@ -7,7 +7,7 @@ import mongoose from 'mongoose';
 import {
     logger
 } from '../helpers/logger.js';
-import userModel from './models/userModel.js';
+import userModel from './models/UserModel.js';
 import Stripe from 'stripe';
 import config from '../config/config.js';
 

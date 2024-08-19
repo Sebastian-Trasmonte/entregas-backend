@@ -9,7 +9,7 @@ import {
 } from '../helpers/fakerUtils.js';
 import ProductController from "../controllers/productController.js";
 import Product from "../models/Product.js";
-import userModel from "../dao/models/userModel.js";
+import userModel from "../dao/models/UserModel.js";
 import { errorsEnum } from "../helpers/errorsEnum.js";
 import { logger } from "../helpers/logger.js";
 

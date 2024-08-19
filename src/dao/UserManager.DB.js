@@ -1,7 +1,7 @@
 import {
     errorsEnum
 } from '../helpers/errorsEnum.js';
-import userModel from './models/userModel.js';
+import userModel from './models/UserModel.js';
 import mongoose from 'mongoose';
 
 export default class UserManager {

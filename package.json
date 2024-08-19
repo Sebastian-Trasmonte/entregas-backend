@@ -32,7 +32,7 @@
   },
   "scripts": {
     "test": "mocha test/*.test.js",
-    "start": "node app.js",
+    "start": "node src/app.js",
     "dev": "nodemon src/app.js"
   },
   "author": "",

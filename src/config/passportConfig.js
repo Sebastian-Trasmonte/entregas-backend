@@ -2,7 +2,7 @@ import passport from "passport";
 import local from "passport-local";
 import GitHubStrategy from "passport-github2";
 import config from "./config.js";
-import userModel from  "../dao/models/userModel.js";
+import userModel from  "../dao/models/UserModel.js";
 import {
     isSamePassword
 } from "../helpers/utils.js";
