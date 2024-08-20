@@ -7,6 +7,7 @@ import {
     isSamePassword
 } from "../helpers/utils.js";
 import UserController from "../controllers/userController.js";
+import config from "./config.js";
 
 
 const localStrategy = local.Strategy;
@@ -85,7 +86,7 @@ const inicializatePassport = () => {
     passport.use(new GitHubStrategy({
             clientID: clientId,
             clientSecret: clientSecret,
-            callbackURL: "http://localhost:8080/api/session/githubcallback"
+            callbackURL: config.url_git
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
