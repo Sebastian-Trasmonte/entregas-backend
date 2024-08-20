@@ -7,7 +7,6 @@ import {
     isSamePassword
 } from "../helpers/utils.js";
 import UserController from "../controllers/userController.js";
-import config from "./config.js";
 
 
 
