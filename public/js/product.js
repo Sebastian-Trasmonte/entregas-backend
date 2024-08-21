@@ -92,7 +92,7 @@ socket.on("error-occurred", (message) => {
 })
 
 function goBack() {
-    window.history.back();
+    window.location.href = `/products/`;       
 }
 
 function goToCart(idCart) {

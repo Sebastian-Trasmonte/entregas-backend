@@ -97,6 +97,8 @@ router.get("/products", auth, async (req, res) => {
         });
     });
 
+    let cart = req.session.user.cart != undefined && req.session.user.cart.length > 0 ? req.session.user.cart[0]._id : null
+
     res.render(
         "products", {
             title: "Products",
@@ -114,7 +116,7 @@ router.get("/products", auth, async (req, res) => {
             query: query,
             name: req.session.user.first_name,
             role: req.session.user.role,
-            cartId: req.session.user.cart != undefined && req.session.user.cart.length >0 ? req.session.user.cart[0]._id : null,
+            cartId: cart,
         }
     )
 });
@@ -126,12 +128,9 @@ router.get("/productDetail/:id", auth, async (req, res) => {
    
     if (user.cart == undefined || user.cart.length == 0) 
     {
-        console.log("1",user);
-        user.cart.push(await cartController.addCart(req.session.user._id));
-        console.log("2",user);
+        user.cart.push({_id: await cartController.addCart(req.session.user._id)});
         req.session.user = user;
     }
-    console.log("3",user);
     res.render(
         "productDetail", {
             title: "Product details",
